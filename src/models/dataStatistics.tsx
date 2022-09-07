@@ -22,9 +22,9 @@ const getInitialImgQuery = () => ({
 const formatQuery = (query) => {
     const { timeRange = [], qualified, ...rest } = query;
     const startTime =
-        timeRange[0] && moment(timeRange[0]).format("YYYY-MM-DD HH:mm:ss");
+        !!timeRange && timeRange[0] ? moment(timeRange[0]).format("YYYY-MM-DD HH:mm:ss") : undefined;
     const endTime =
-        timeRange[1] && moment(timeRange[1]).format("YYYY-MM-DD HH:mm:ss");
+        !!timeRange && timeRange[1] ? moment(timeRange[1]).format("YYYY-MM-DD HH:mm:ss") : undefined;
     let res = {
         ...rest,
         startTime,
@@ -44,8 +44,6 @@ export default () => {
 
     const [currentOrderIdList, setCurrentOrderIdList] = useState<any>([]);
     const [currentOrderId, setCurrentOrderId] = useState<any>('');
-    const [clickedType, setClickedType] = useState(0);
-    const [selectedTime, setSelectedTime] = useState([]);
     const [imgDrawerVisible, setImgDrawerVisible] = useState<boolean>(false);
     const [imgQuery, setImgQuery] = useState<any>(getInitialImgQuery());
     const [imgList, setImgList] = useState<any>(getInitialList());
@@ -161,8 +159,8 @@ export default () => {
         ready && loadOrderList();
     }, [ready, orderQuery])
     useEffect(() => {
-        imgDrawerVisible && loadImgList({ page: 1, orderId: currentOrderId, qualified: clickedType, timeRange: selectedTime })
-    }, [ready, imgDrawerVisible, imgQuery, currentOrderId, clickedType, selectedTime])
+        imgDrawerVisible && loadImgList({ page: 1, orderId: currentOrderId, })
+    }, [ready, imgDrawerVisible, imgQuery, currentOrderId])
 
     return {
         ready, setReady,
@@ -172,8 +170,6 @@ export default () => {
         currentOrderId, setCurrentOrderId,
         imgDrawerVisible, setImgDrawerVisible,
         imgList, setImgList, loadImgList,
-        clickedType, setClickedType,
-        selectedTime, setSelectedTime,
         imgQuery, setImgQuery,
         resetOrderQuery, resetImgQuery, resetImgDrawer,
         patchImg, unmount, staticsOrderList, queryImgList,

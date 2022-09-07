@@ -6,6 +6,7 @@ import ImgViewer from '@/components/ImgViewer'
 import useResize from '@/hooks/useResize'
 import { delay } from '@/utils/utils'
 import moment from 'moment'
+import * as _ from 'lodash';
 
 const format = (time) => moment(time).format("YYYY-MM-DD HH:mm:ss");
 const RangePicker: any = DatePicker.RangePicker;
@@ -42,13 +43,12 @@ interface Props {
 
 const ImgDrawer: React.FC<Props> = (props: any) => {
     const {
-        currentOrderIdList, setCurrentOrderIdList, currentOrderId, setCurrentOrderId,
+        currentOrderIdList, setCurrentOrderId,
         imgQuery, setImgQuery, imgList, loadImgList,
-        clickedType, setClickedType, selectedTime,
         imgDrawerVisible, setImgDrawerVisible, resetImgDrawer,
         imgViewerVisible, setImgViewerVisible, imgViewerData, setImgViewerData,
         handleAudit, loadSiblingImg
-    } = useModel('dataStatistics' as any)
+    } = useModel('dataStatistics' as any);
     const [form] = Form.useForm()
     const { height } = useResize()
     const [curHeight, setCurHeight] = useState<number>(height)
@@ -58,9 +58,8 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
     }, [height])
 
     useEffect(() => {
-        const param = Object.assign({}, imgQuery, { qualified: clickedType, timeRange: selectedTime, });
-        form.setFieldsValue(param)
-    }, [form, imgQuery, clickedType])
+        form.setFieldsValue(imgQuery);
+    }, [form, imgQuery])
 
     const handleViewImg = record => () => {
         setImgViewerData(record)
@@ -154,7 +153,10 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
                         </Form.Item>
                     </Col>
                     <Col span={10} >
-                        <Form.Item label="起止时间" name="timeRange">
+                        <Form.Item
+                            label="起止时间"
+                            name="timeRange"
+                        >
                             <RangePicker showTime />
                         </Form.Item>
                     </Col>
@@ -162,7 +164,6 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
                         <Form.Item
                             label="检测结果"
                             name="qualified"
-                            initialValue={clickedType}
                         >
                             <Radio.Group optionType='button' options={resultOptions} />
                         </Form.Item>

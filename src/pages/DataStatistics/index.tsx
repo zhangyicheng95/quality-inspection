@@ -1,29 +1,24 @@
-import './index.less'
-import { useCallback, useEffect, useState } from 'react'
-import { useModel, history } from 'umi'
-import { Input, DatePicker, Table, Button, Form, Row, Col, Select } from 'antd'
-import PanelTitle from '@/components/PanelTitle'
-import useResize from '@/hooks/useResize'
-import ImgDrawer from './ImgDrawer'
+import './index.less';
+import { useEffect, useState } from 'react';
+import { useModel, } from 'umi';
+import { DatePicker, Button, Form, Row, Col, } from 'antd';
+import PanelTitle from '@/components/PanelTitle';
+import ImgDrawer from './ImgDrawer';
 import classNames from 'classnames';
-import BarCharts from './BarCharts'
+import BarCharts from './BarCharts';
 import * as _ from 'lodash';
+import moment from 'moment';
 
-const { Option } = Select;
 const RangePicker: any = DatePicker.RangePicker;
 
 const DataStatistics = () => {
-    const [form] = Form.useForm()
-    const { height } = useResize()
-    const [curHeight, setCurHeight] = useState<number>(height)
+    const [form] = Form.useForm();
     const [currentType, setCurrentType] = useState<string>('order');
     const [chartsData, setChartsData] = useState([]);
     const [chartsFooter, setChartsFooter] = useState([]);
     const {
         setReady, setOrderQuery, imgDrawerVisible,
-        orderList, loadOrderList,
-        clickedType, setClickedType, setSelectedTime,
-        unmount, handleViewOrder, setImgDrawerVisible,
+        orderList, unmount, handleViewOrder, setImgQuery,
     } = useModel('dataStatistics' as any)
 
     useEffect(() => {
@@ -34,9 +29,6 @@ const DataStatistics = () => {
         setReady(true);
         // return unmount()
     }, [form])
-    useEffect(() => {
-        setCurHeight(Math.max(height, 700))
-    }, [height])
 
     useEffect(() => {
         console.log('orderList', orderList)
@@ -56,7 +48,6 @@ const DataStatistics = () => {
 
     const onCancel = () => {
         form.resetFields();
-        setSelectedTime([]);
     }
 
     return (
@@ -92,10 +83,8 @@ const DataStatistics = () => {
                         </div>
                     </Col>
                     <Col span={6} offset={2}>
-                        <Form.Item label="发生时间" name="timeRange">
-                            <RangePicker showTime onChange={(e) => {
-                                setSelectedTime(e)
-                            }} />
+                        <Form.Item label="发生时间" name="timeRange" >
+                            <RangePicker showTime />
                         </Form.Item>
                     </Col>
                     <Col span={10} offset={2} className="btns">
@@ -119,11 +108,15 @@ const DataStatistics = () => {
                     onClick={(e: any) => {
                         setCurrentType((prev: string) => {
                             console.log(e);
-                            const { seriesName, seriesId, dataIndex } = e;
-                            setClickedType(() => seriesId === 'normal' ? 1 : -1);
+                            const { name, seriesId, dataIndex } = e;
+                            setImgQuery((prev: any) => {
+                                return Object.assign({}, prev, {
+                                    timeRange: [moment(new Date(name).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(name).getTime() + 16 * 60 * 60 * 1000 - 1000)],
+                                    qualified: seriesId === 'normal' ? 1 : -1
+                                })
+                            })
                             if (prev === 'order') {
                                 const data = Object.values(orderList)[dataIndex][seriesId];
-                                console.log(data);
                                 handleViewOrder({ orderId: data });
                             } else {
                                 handleViewOrder({ orderId: '' });

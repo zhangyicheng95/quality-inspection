@@ -1,6 +1,6 @@
 import './index.less'
 import React, { Fragment, useEffect, useMemo, useState } from 'react'
-import { useModel, history, useHistory, useLocation } from 'umi'
+import { useModel, history, } from 'umi'
 import { Table, Button, message } from 'antd'
 import PanelTitle from '@/components/PanelTitle'
 import ImgViewer from '@/components/ImgViewer'
@@ -25,7 +25,7 @@ const CLASS_RESULT = {
   "-1": "danger",
 };
 
-const Realtime = () => {
+const Realtime: React.FC = () => {
   const {
     init, removeInit, result, processResult, processResultTimes, setProcessResultTimes,
     orderCount, exceptionOrderCount } = useModel('realtime' as any);

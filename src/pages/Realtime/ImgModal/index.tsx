@@ -1,7 +1,7 @@
 import './index.less';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useModel } from 'umi';
-import { Form, Radio, DatePicker, Drawer, InputNumber, Table, Row, Col, Button, Modal } from 'antd';
+import { Modal } from 'antd';
 import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 import * as _ from 'lodash';
 
