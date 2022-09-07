@@ -1,7 +1,7 @@
 import './index.less'
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import { useModel, history, useHistory, useLocation } from 'umi'
-import { Table, Button } from 'antd'
+import { Table, Button, message } from 'antd'
 import PanelTitle from '@/components/PanelTitle'
 import ImgViewer from '@/components/ImgViewer'
 import useResize from '@/hooks/useResize'
@@ -35,6 +35,14 @@ const Realtime = () => {
   const [imgViewerData, setImgViewerData] = useState<any>({});
   const [imgViewerVisible, setImgViewerVisible] = useState<boolean>(false);
   const [imgModalData, setImgModalData] = useState<any>({});
+
+  const systemType = useMemo(() => {
+    // @ts-ignore
+    return window?.QUALITY_CONFIG?.type
+  }, [
+    // @ts-ignore
+    window?.QUALITY_CONFIG?.type
+  ]);
 
   useEffect(() => {
     init();
@@ -113,11 +121,40 @@ const Realtime = () => {
       <div className="panel left-panel" style={{ width: curHeight - 210 }}>
         <PanelTitle>实时结果</PanelTitle>
         <div className="panel-content">
-          {current1.imageUrl && <div
-            className='img'
-            style={{ backgroundImage: `url(${current1.imageUrl})` }}
-            onClick={handleViewImg(current1)}
-          />}
+          {
+            (systemType === 'jbt') ?  // && isObject(processResult) && !isEmpty(processResult)
+              <Fragment>
+                <div className="img jbt" />
+                <div className="jbt-box">
+                  {jbtLines.map((item: any, index: number) => {
+                    const { x1, y1, x2, y2 } = item;
+                    return <div
+                      key={index}
+                      className="jbt-box-item-line"
+                      style={{
+                        left: x1 * 100 + '%',
+                        top: y1 * 100 + '%',
+                        right: (1 - x2) * 100 + '%',
+                        bottom: (1 - y2) * 100 + '%',
+                      }}
+                      onClick={() => {
+                        if (!isObject(processResult) || isEmpty(processResult)) {
+                          message.warning('暂无结果信息');
+                          return;
+                        }
+                        setImgModalData(processResult)
+                      }}
+                    />
+                  })}
+                </div>
+              </Fragment>
+              :
+              (current1.imageUrl && <div
+                className='img'
+                style={{ backgroundImage: `url(${current1.imageUrl})` }}
+                onClick={handleViewImg(current1)}
+              />)
+          }
           {
             current1.id &&
             <Fragment>
@@ -128,11 +165,12 @@ const Realtime = () => {
                 <span className="field">图片名称:&nbsp;{current1?.imageUrl?.split('track-inspect/')[1] || ''}</span>
               </div>
               {
-                isObject(processResult) && !isEmpty(processResult) ?
-                  <div className={`show-img-result`} onClick={() => setImgModalData(processResult)}>
-                    预览结果
-                  </div>
-                  : null
+                systemType === 'jbt' ? null :
+                  (isObject(processResult) && !isEmpty(processResult) ?
+                    <div className={`show-img-result`} onClick={() => setImgModalData(processResult)}>
+                      预览结果
+                    </div>
+                    : null)
               }
               <div className={`current-img-result ${current1.result > 0 ? '' : 'error'}`}>
                 {LABEL_RESULT[current1.result]}
@@ -191,3 +229,66 @@ const Realtime = () => {
 }
 
 export default Realtime
+
+const jbtLines = [
+  {
+    x1: 0.28,
+    y1: 0.065,
+    x2: 0.69,
+    y2: 0.075
+  },
+  {
+    x1: 0.28,
+    y1: 0.085,
+    x2: 0.69,
+    y2: 0.095
+  },
+  {
+    x1: 0.2,
+    y1: 0.21,
+    x2: 0.78,
+    y2: 0.22
+  },
+  {
+    x1: 0.2,
+    y1: 0.225,
+    x2: 0.78,
+    y2: 0.235
+  },
+  {
+    x1: 0.18,
+    y1: 0.3,
+    x2: 0.80,
+    y2: 0.31
+  },
+  {
+    x1: 0.135,
+    y1: 0.4,
+    x2: 0.85,
+    y2: 0.41
+  },
+  {
+    x1: 0.135,
+    y1: 0.5,
+    x2: 0.85,
+    y2: 0.51
+  },
+  {
+    x1: 0.135,
+    y1: 0.69,
+    x2: 0.86,
+    y2: 0.7
+  },
+  {
+    x1: 0.24,
+    y1: 0.86,
+    x2: 0.76,
+    y2: 0.87
+  },
+  {
+    x1: 0.4,
+    y1: 0.89,
+    x2: 0.6,
+    y2: 0.9
+  }
+];

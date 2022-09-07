@@ -32,7 +32,7 @@ export default defineConfig({
     manifest: {
         basePath: '/',
     },
-    headScripts: [{src: '/title.js'}],
+    headScripts: [{src: '/env-config.js'}],
     // Fast Refresh 热更新
     fastRefresh: {},
     mock: !!MOCK ? {} : false,

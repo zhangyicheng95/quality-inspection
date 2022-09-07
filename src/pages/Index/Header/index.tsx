@@ -24,7 +24,10 @@ const Header: React.FC = () => {
                 <div className="date-time">{dateTimeStr}</div>
             </div>
             <div className="middle" onClick={() => setSettingVisible(true)}>
-                <span>{localStorage.getItem("serverTitle") || window.__SANT__QI__TITIE || '视觉质检'}</span>
+                <span>{
+                    //@ts-ignore
+                    localStorage.getItem("serverTitle") || window?.QUALITY_CONFIG?.title || '视觉质检'
+                }</span>
             </div>
             <div className="right">
                 <div
