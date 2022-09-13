@@ -4,6 +4,7 @@ import { useModel } from 'umi';
 import { Modal } from 'antd';
 import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 import * as _ from 'lodash';
+import { indexOf } from 'lodash';
 
 interface Props {
     data: any;
@@ -16,8 +17,9 @@ const ImgModal: React.FC<Props> = (props) => {
     const {
         processResult
     } = useModel('history' as any);
-    const { globalSrcPath = '', boundingBoxes = [], } = !_.isEmpty(data) ? data : processResult;
-
+    const { globalSrcPath = '', boundingBoxes = [], label, } = !_.isEmpty(data) ? data : processResult;
+    // @ts-ignore
+    const systemType = window?.QUALITY_CONFIG?.type;
     const [selectedUrl, setSelectedUrl] = useState(0);
     const [selectedNum, setSelectedNum] = useState(0);
 
@@ -34,37 +36,47 @@ const ImgModal: React.FC<Props> = (props) => {
                 onCancel();
             }}
         >
-            <div className="page-history-img-modal-body ">
+            <div className={`page-history-img-modal-body ${systemType === 'ym' ? '' : 'flex-box'}`}>
                 <div
-                    className="body-left"
+                    className={systemType === 'ym' ? 'body-top' : "body-left"}
                     style={{ backgroundImage: `url(${globalSrcPath || ''})` }}
                 >
                     {
-                        (boundingBoxes || []).map((item: any, index: number) => {
-                            const { points, } = item;
-                            return (
-                                <div
-                                    key={index}
-                                    className="body-left-item"
-                                    style={{
-                                        top: points[0][1] * 100 + '%',
-                                        left: points[0][0] * 100 + '%',
-                                        right: (1 - points[1][0]) * 100 + '%',
-                                        bottom: (1 - points[1][1]) * 100 + '%',
-                                        borderColor: selectedUrl === index ? '#ff8200' : 'red'
-                                    }}
-                                    onClick={() => {
-                                        setSelectedUrl(index);
-                                        setSelectedNum(0);
-                                    }}
-                                />
-                            )
-                        })
+                        (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes).map(
+                            (item: any, index: number) => {
+                                const { points, } = item;
+                                return (
+                                    <div
+                                        key={index}
+                                        className="body-left-item"
+                                        style={!!label ? {
+                                            top: `calc(${points[0][1] * 100}% - 10px)`,
+                                            left: `calc(${points[0][0] * 100}% - 10px)`,
+                                            width: 20,
+                                            height: 20,
+                                            borderRadius: '50%',
+                                            borderColor: selectedUrl === index ? '#ff8200' : 'red'
+                                        } : {
+                                            top: points[0][1] * 100 + '%',
+                                            left: points[0][0] * 100 + '%',
+                                            right: (1 - points[1][0]) * 100 + '%',
+                                            bottom: (1 - points[1][1]) * 100 + '%',
+                                            borderColor: selectedUrl === index ? '#ff8200' : 'red'
+                                        }}
+                                        onClick={() => {
+                                            setSelectedUrl(index);
+                                            setSelectedNum(0);
+                                        }}
+                                    />
+                                )
+                            })
                     }
                 </div>
                 <div
-                    className="body-right flex-box"
-                    style={{ backgroundImage: `url(${boundingBoxes[selectedUrl]?.localSrcList[selectedNum] || ''})` }}
+                    className={`${systemType === 'ym' ? 'body-bottom' : 'body-right'} flex-box`}
+                    style={{
+                        backgroundImage: `url(${(!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcList[selectedNum] || ''})`
+                    }}
                 >
                     {
                         (selectedNum > 0) ?
@@ -73,7 +85,7 @@ const ImgModal: React.FC<Props> = (props) => {
                             <LeftCircleOutlined className="left-icon" style={{ color: 'gray', cursor: 'not-allowed' }} />
                     }
                     {
-                        (selectedNum < boundingBoxes[selectedUrl]?.localSrcList.length - 1) ?
+                        (selectedNum < (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcList.length - 1) ?
                             <RightCircleOutlined className="right-icon" onClick={() => setSelectedNum(prev => prev + 1)} />
                             :
                             <RightCircleOutlined className="right-icon" style={{ color: 'gray', cursor: 'not-allowed' }} />

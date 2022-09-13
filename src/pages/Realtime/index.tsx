@@ -35,14 +35,8 @@ const Realtime: React.FC = () => {
   const [imgViewerData, setImgViewerData] = useState<any>({});
   const [imgViewerVisible, setImgViewerVisible] = useState<boolean>(false);
   const [imgModalData, setImgModalData] = useState<any>({});
-
-  const systemType = useMemo(() => {
-    // @ts-ignore
-    return window?.QUALITY_CONFIG?.type
-  }, [
-    // @ts-ignore
-    window?.QUALITY_CONFIG?.type
-  ]);
+  // @ts-ignore
+  const systemType = window?.QUALITY_CONFIG?.type;
 
   useEffect(() => {
     init();
@@ -122,12 +116,12 @@ const Realtime: React.FC = () => {
         <PanelTitle>实时结果</PanelTitle>
         <div className="panel-content">
           {
-            (systemType === 'jbt') ?  // && isObject(processResult) && !isEmpty(processResult)
+            (systemType === 'jbt' || systemType === 'tbg') ?  // && isObject(processResult) && !isEmpty(processResult)
               <Fragment>
-                <div className="img jbt" />
+                <div className={`img ${systemType}`} />
                 <div className="jbt-box">
-                  {jbtLines.map((item: any, index: number) => {
-                    const { x1, y1, x2, y2 } = item;
+                  {(systemType === 'jbt' ? jbtLines : tbgLines).map((item: any, index: number) => {
+                    const { label, x1, y1, x2, y2, radio } = item;
                     return <div
                       key={index}
                       className="jbt-box-item-line"
@@ -136,13 +130,14 @@ const Realtime: React.FC = () => {
                         top: y1 * 100 + '%',
                         right: (1 - x2) * 100 + '%',
                         bottom: (1 - y2) * 100 + '%',
+                        borderRadius: radio,
                       }}
                       onClick={() => {
                         if (!isObject(processResult) || isEmpty(processResult)) {
                           message.warning('暂无结果信息');
                           return;
                         }
-                        setImgModalData(processResult)
+                        setImgModalData(Object.assign({}, processResult, { label }))
                       }}
                     />
                   })}
@@ -232,63 +227,106 @@ export default Realtime
 
 const jbtLines = [
   {
+    label: 10,
     x1: 0.28,
     y1: 0.065,
     x2: 0.69,
     y2: 0.075
   },
   {
+    label: 9,
     x1: 0.28,
     y1: 0.085,
     x2: 0.69,
     y2: 0.095
   },
   {
+    label: 8,
     x1: 0.2,
     y1: 0.21,
     x2: 0.78,
     y2: 0.22
   },
   {
+    label: 7,
     x1: 0.2,
     y1: 0.225,
     x2: 0.78,
     y2: 0.235
   },
   {
+    label: 6,
     x1: 0.18,
     y1: 0.3,
     x2: 0.80,
     y2: 0.31
   },
   {
+    label: 5,
     x1: 0.135,
     y1: 0.4,
     x2: 0.85,
     y2: 0.41
   },
   {
+    label: 4,
     x1: 0.135,
     y1: 0.5,
     x2: 0.85,
     y2: 0.51
   },
   {
+    label: 3,
     x1: 0.135,
     y1: 0.69,
     x2: 0.86,
     y2: 0.7
   },
   {
+    label: 2,
     x1: 0.24,
     y1: 0.86,
     x2: 0.76,
     y2: 0.87
   },
   {
+    label: 1,
     x1: 0.4,
     y1: 0.89,
     x2: 0.6,
     y2: 0.9
+  }
+];
+
+const tbgLines = [
+  {
+    label: 1,
+    x1: 0.37,
+    y1: 0.14,
+    x2: 0.6,
+    y2: 0.18
+  },
+  {
+    label: 2,
+    x1: 0.695,
+    y1: 0.115,
+    x2: 0.835,
+    y2: 0.25,
+    radio: '50%',
+  },
+  {
+    label: 3,
+    x1: 0.37,
+    y1: 0.78,
+    x2: 0.61,
+    y2: 0.825
+  },
+  {
+    label: 4,
+    x1: 0.695,
+    y1: 0.715,
+    x2: 0.835,
+    y2: 0.85,
+    radio: '50%',
   }
 ];
