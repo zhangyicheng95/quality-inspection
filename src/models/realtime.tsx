@@ -14,9 +14,7 @@ export default () => {
     const [ws, setWs] = useState<any>();
     const [inited, setInited] = useState<boolean>(false);
     const init = async () => {
-        setTimeout(() => {
-            setProcessResult({})
-        }, 2000)
+        setProcessResult({})
         console.log('version 0.0.4 2022-01-07 v2')
         if (window['ws']) return;
         await delay(1000)

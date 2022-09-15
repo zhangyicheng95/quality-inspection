@@ -14,10 +14,7 @@ interface Props {
 
 const ImgModal: React.FC<Props> = (props) => {
     const { data = {}, onCancel, } = props;
-    const {
-        processResult
-    } = useModel('history' as any);
-    const { globalSrcPath = '', boundingBoxes = [], label, } = !_.isEmpty(data) ? data : processResult;
+    const { globalSrcPath = '', boundingBoxes = [], label, } = data;
     // @ts-ignore
     const systemType = window?.QUALITY_CONFIG?.type;
     const [selectedUrl, setSelectedUrl] = useState(0);

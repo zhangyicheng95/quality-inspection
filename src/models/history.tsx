@@ -1,4 +1,4 @@
-import { queryOrderList, queryImgList, getSiblingImg, auditImg } from "@/services";
+import { queryOrderList, getOrderDetail, queryImgList, getSiblingImg, auditImg } from "@/services";
 import { useEffect, useState } from 'react';
 const moment = require("moment");
 const getInitialList = () => ({
@@ -44,7 +44,7 @@ export default () => {
     const [imgDrawerVisible, setImgDrawerVisible] = useState<boolean>(false)
     const [imgQuery, setImgQuery] = useState<any>(getInitialImgQuery())
     const [imgList, setImgList] = useState<any>(getInitialList())
-
+    const [processResult, setProcessResult] = useState<any>({});
     const [imgViewerLoading, setImgViewerLoading] = useState<boolean>(false)
     const [imgViewerData, setImgViewerData] = useState<any>({})
     const [imgViewerVisible, setImgViewerVisible] = useState<boolean>(false)
@@ -86,6 +86,13 @@ export default () => {
         )
         if (res) {
             setOrderList(res)
+        }
+    };
+    const handleOrderDetail = async (orderId: string) => {
+        if (orderId) {
+            const res = await getOrderDetail(orderId);
+            // console.log(res)
+            res && setProcessResult(res);
         }
     }
     const handleViewOrder = (order) => {
@@ -154,6 +161,7 @@ export default () => {
         patchImg, unmount, queryOrderList, queryImgList,
         handleAudit, loadSiblingImg, handleViewOrder,
         imgViewerVisible, imgViewerData, imgViewerLoading,
-        setImgViewerVisible, setImgViewerData, setImgViewerLoading
+        setImgViewerVisible, setImgViewerData, setImgViewerLoading,
+        handleOrderDetail, processResult, setProcessResult,
     }
 };

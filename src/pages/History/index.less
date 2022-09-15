@@ -1,32 +1,36 @@
-.page-history{
+.page-history {
     width: 100%;
     height: 100%;
     gap: 20px;
 
-    &-order-query{
+    &-order-query {
         margin-top: 20px;
         background-image: url('/img/form-bg.png');
         background-size: 100% 100%;
         height: 72px;
         padding: 20px 50px;
         position: relative;
-        .left-ghost{
+
+        .left-ghost {
             position: absolute;
             content: ' ';
             height: 24px;
             width: 24px;
             left: -1px;
             border-left: 2px solid #38E8F7;
-            &.top{
+
+            &.top {
                 top: -1px;
                 border-top: 2px solid #38E8F7;
             }
-            &.bottom{
+
+            &.bottom {
                 bottom: -1px;
                 border-bottom: 2px solid #38E8F7;
             }
         }
-        &::before{
+
+        &::before {
             position: absolute;
             right: -1px;
             top: -1px;
@@ -35,7 +39,8 @@
             border-top: 2px solid #38E8F7;
             border-right: 2px solid #38E8F7;
         }
-        &::after{
+
+        &::after {
             position: absolute;
             content: ' ';
             bottom: -1px;
@@ -45,14 +50,55 @@
             background-image: url('/img/form-right-bottom.png');
             background-size: 100% 100%;
         }
-        .btns{
+
+        .btns {
             display: flex;
             gap: 20px;
             justify-content: flex-end;
         }
     }
 
-    &-order-list{
+    &-order-list {
         margin-top: 18px;
+    }
+}
+
+.page-history-img-modal {
+    .ant-modal-body {
+        position: relative;
+
+        .img {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            right: 18px;
+            bottom: 0;
+            background-size: 50% 100%;
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
+
+        .jbt {
+            background-image: url('/img/jbt.jpg');
+            cursor: auto;
+        }
+
+        .tbg {
+            background-image: url('/img/tbg.jpg');
+            cursor: auto;
+        }
+
+        .jbt-box {
+            height: 100%;
+            width: 100%;
+            position: relative;
+
+            &-item-line {
+                position: absolute;
+                border: 2px solid #f00;
+                cursor: pointer;
+            }
+        }
     }
 }

@@ -1,5 +1,5 @@
 import './index.less'
-import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useModel, history, } from 'umi'
 import { Table, Button, message } from 'antd'
 import PanelTitle from '@/components/PanelTitle'
@@ -116,7 +116,7 @@ const Realtime: React.FC = () => {
         <PanelTitle>实时结果</PanelTitle>
         <div className="panel-content">
           {
-            (systemType === 'jbt' || systemType === 'tbg') ?  // && isObject(processResult) && !isEmpty(processResult)
+            (systemType === 'jbt' || systemType === 'tbg') && isObject(processResult) && !isEmpty(processResult) ?
               <Fragment>
                 <div className={`img ${systemType}`} />
                 <div className="jbt-box">
