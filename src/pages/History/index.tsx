@@ -187,7 +187,13 @@ const History = () => {
                                     message.warning('暂无结果信息');
                                     return;
                                 }
-                                setImgModalData(Object.assign({}, processResult, { label }))
+                                setImgModalData(Object.assign({}, processResult, {
+                                    label,
+                                    //@ts-ignore
+                                    globalSrcPath: processResult?.global_src_path,
+                                    //@ts-ignore
+                                    boundingBoxes: processResult?.bounding_boxes,
+                                }))
                             }}
                         />
                     })}

@@ -91,7 +91,7 @@ export default () => {
     const handleOrderDetail = async (orderId: string) => {
         if (orderId) {
             const res = await getOrderDetail(orderId);
-            // console.log(res)
+            console.log(res)
             res && setProcessResult(res);
         }
     }

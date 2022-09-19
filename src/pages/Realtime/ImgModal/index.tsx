@@ -1,10 +1,8 @@
 import './index.less';
 import { useState } from 'react';
-import { useModel } from 'umi';
 import { Modal } from 'antd';
 import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 import * as _ from 'lodash';
-import { indexOf } from 'lodash';
 
 interface Props {
     data: any;
