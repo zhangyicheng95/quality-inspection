@@ -189,11 +189,18 @@ const History = () => {
                                 }
                                 setImgModalData(Object.assign({}, processResult, {
                                     label,
+                                },
                                     //@ts-ignore
-                                    globalSrcPath: processResult?.global_src_path,
-                                    //@ts-ignore
-                                    boundingBoxes: processResult?.bounding_boxes,
-                                }))
+                                    !!processResult?.bounding_boxes ? {
+                                        //@ts-ignore
+                                        globalSrcPath: processResult?.global_src_path,
+                                        //@ts-ignore
+                                        boundingBoxes: processResult?.bounding_boxes.map(
+                                            (item: any) => Object.assign({}, item, {
+                                                localSrcList: item?.local_src_list
+                                            })
+                                        ),
+                                    } : {}))
                             }}
                         />
                     })}
