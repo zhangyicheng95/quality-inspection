@@ -1,5 +1,5 @@
 import './index.less';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal } from 'antd';
 import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 import * as _ from 'lodash';
@@ -17,6 +17,17 @@ const ImgModal: React.FC<Props> = (props) => {
     const systemType = window?.QUALITY_CONFIG?.type;
     const [selectedUrl, setSelectedUrl] = useState(0);
     const [selectedNum, setSelectedNum] = useState(0);
+    const [imgSize, setImgSize] = useState(0);
+
+    useEffect(() => {
+        const img = new Image();
+        img.src = globalSrcPath;
+        img.onload = (res: any) => {
+            const { width, height } = res;
+            console.log('ImgModal27', res);
+            setImgSize(width / height);
+        }
+    }, [globalSrcPath])
 
     return (
         <Modal
@@ -34,7 +45,10 @@ const ImgModal: React.FC<Props> = (props) => {
             <div className={`page-history-img-modal-body ${systemType === 'ym' ? '' : 'flex-box'}`}>
                 <div
                     className={systemType === 'ym' ? 'body-top' : "body-left"}
-                    style={{ backgroundImage: `url(${globalSrcPath || ''})` }}
+                    style={{
+                        backgroundImage: `url(${globalSrcPath || ''})`,
+                        backgroundSize: imgSize > 1 ? '100% auto' : 'auto 100%'
+                    }}
                 >
                     {
                         (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes).map(
