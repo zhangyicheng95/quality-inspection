@@ -1,5 +1,5 @@
 import './index.less';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useModel, } from 'umi';
 import { DatePicker, Button, Form, Row, Col, } from 'antd';
 import PanelTitle from '@/components/PanelTitle';
@@ -49,59 +49,67 @@ const DataStatistics = () => {
     const onCancel = () => {
         form.resetFields();
     }
+    const isIframe = useMemo(() => {
+        return window.location.hash.split('?')[1] === 'iframe';
+    }, [window.location.hash]);
 
     return (
         <div className="page-history">
-            <PanelTitle>数据统计</PanelTitle>
-            <Form
-                form={form}
-                className="page-history-order-query"
-                initialValues={{}}
-                onFinish={(values) => setOrderQuery({ ...values, currentType })}
-            >
-                <div className="left-ghost top" />
-                <div className="left-ghost bottom" />
-                <Row gutter={24}>
-                    <Col span={4} className="statistic-btn-box">
-                        <div
-                            className={classNames("statistic-btn", { active: currentType === 'order' })}
-                            onClick={() => {
-                                setCurrentType('order');
-                                onCancel();
-                            }}
+            {
+                isIframe ? null :
+                    <Fragment>
+                        <PanelTitle>数据统计</PanelTitle>
+                        <Form
+                            form={form}
+                            className="page-history-order-query"
+                            initialValues={{}}
+                            onFinish={(values) => setOrderQuery({ ...values, currentType })}
                         >
-                            订单维度
-                        </div>
-                        <div
-                            className={classNames("statistic-btn", { active: currentType === 'img' })}
-                            onClick={() => {
-                                setCurrentType('img');
-                                onCancel();
-                            }}
-                        >
-                            图片维度
-                        </div>
-                    </Col>
-                    <Col span={6} offset={2}>
-                        <Form.Item label="发生时间" name="timeRange" >
-                            <RangePicker showTime />
-                        </Form.Item>
-                    </Col>
-                    <Col span={10} offset={2} className="btns">
-                        <Button type="primary" htmlType="submit">
-                            搜索
-                        </Button>
-                        <Button
-                            style={{ margin: '0 8px' }}
-                            ghost
-                            onClick={() => onCancel()}
-                        >
-                            重置
-                        </Button>
-                    </Col>
-                </Row>
-            </Form>
-            <div className="page-history-order-list">
+                            <div className="left-ghost top" />
+                            <div className="left-ghost bottom" />
+                            <Row gutter={24}>
+                                <Col span={4} className="statistic-btn-box">
+                                    <div
+                                        className={classNames("statistic-btn", { active: currentType === 'order' })}
+                                        onClick={() => {
+                                            setCurrentType('order');
+                                            onCancel();
+                                        }}
+                                    >
+                                        订单维度
+                                    </div>
+                                    <div
+                                        className={classNames("statistic-btn", { active: currentType === 'img' })}
+                                        onClick={() => {
+                                            setCurrentType('img');
+                                            onCancel();
+                                        }}
+                                    >
+                                        图片维度
+                                    </div>
+                                </Col>
+                                <Col span={6} offset={2}>
+                                    <Form.Item label="发生时间" name="timeRange" >
+                                        <RangePicker showTime />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={10} offset={2} className="btns">
+                                    <Button type="primary" htmlType="submit">
+                                        搜索
+                                    </Button>
+                                    <Button
+                                        style={{ margin: '0 8px' }}
+                                        ghost
+                                        onClick={() => onCancel()}
+                                    >
+                                        重置
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Fragment>
+            }
+            <div className="page-history-order-list" style={isIframe ? { height: '100%', margin: 0 } : {}}>
                 <BarCharts
                     data={chartsData}
                     Xdata={chartsFooter}

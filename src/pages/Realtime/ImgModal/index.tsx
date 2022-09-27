@@ -31,7 +31,7 @@ const ImgModal: React.FC<Props> = (props) => {
 
     const showImg = useMemo(() => {
         if (systemType === 'jbt') {
-            const parent = (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcImages.filter(i => i.type == backImgType);
+            const parent = (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcImages?.filter(i => i.type == backImgType);
             return parent[selectedNum]?.imgUrl;
         }
         return (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcList[selectedNum];

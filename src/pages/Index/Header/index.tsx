@@ -1,5 +1,5 @@
 import './index.less'
-import react, { useState, useEffect, Fragment } from 'react';
+import react, { useState, useEffect, Fragment, useMemo } from 'react';
 import { Modal, message, Form, Input } from 'antd';
 import usePolling from '@/hooks/usePolling'
 import moment from 'moment'
@@ -18,6 +18,22 @@ const Header: React.FC = () => {
         setDateTimeStr(now.format('yyyy年MMMDo dddd HH:mm:ss'))
     }, 500)
 
+    const isIframe = useMemo(() => {
+        return window.location.hash.split('?')[1] === 'iframe';
+    }, [window.location.hash]);
+
+    if (isIframe) {
+        return <div className="page-home-header-iframe">
+            <span onClick={() => {
+                const href = window.location.href.split('?')[0];
+                window.open(href, '_blank');
+            }}>
+                { //@ts-ignore
+                    localStorage.getItem("serverTitle") || window?.QUALITY_CONFIG?.title || '视觉质检'
+                }
+            </span>
+        </div>
+    }
     return (
         <div className="page-home-header">
             <div className="left">

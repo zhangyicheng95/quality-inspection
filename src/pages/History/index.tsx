@@ -194,7 +194,11 @@ const History = () => {
                                 borderRadius: radio,
                             }}
                             onClick={() => {
-                                if (!isObject(processResult) || isEmpty(processResult)) {
+                                if (
+                                    !isObject(processResult) || isEmpty(processResult) ||
+                                    // @ts-ignore
+                                    (processResult?.boundingBoxes || processResult?.bounding_boxes).filter(i => i.label == label).length === 0
+                                ) {
                                     message.warning('暂无结果信息');
                                     return;
                                 }
@@ -209,7 +213,6 @@ const History = () => {
                                         boundingBoxes: processResult?.bounding_boxes.map(
                                             (item: any) => Object.assign({}, item, {
                                                 localSrcList: item?.local_src_list,
-                                                localSrcImages: item?.local_src_images
                                             })
                                         ),
                                     } : {}))

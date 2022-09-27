@@ -10,7 +10,6 @@ interface IProps {
 const Index: React.FC<IProps> = ({
     children,
 }) => {
-
     useEffect(() => {
         !localStorage.getItem("serverTitle") && localStorage.setItem("serverTitle",
             // @ts-ignore
