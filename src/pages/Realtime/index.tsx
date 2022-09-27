@@ -36,6 +36,7 @@ const Realtime: React.FC = () => {
   const [imgViewerVisible, setImgViewerVisible] = useState<boolean>(false);
   const [imgModalData, setImgModalData] = useState<any>({});
   const [imgSize, setImgSize] = useState(0);
+  const [backImgType, setBackImgType] = useState(2);
   // @ts-ignore
   const systemType = window?.QUALITY_CONFIG?.type;
 
@@ -124,7 +125,7 @@ const Realtime: React.FC = () => {
         <PanelTitle>实时结果</PanelTitle>
         <div className="panel-content">
           {
-            (systemType === 'jbt' || systemType === 'tbg') ?
+            (systemType === 'jbt' || systemType === 'tbg') && isObject(processResult) && !isEmpty(processResult) ?
               <Fragment>
                 <div className={`img ${systemType}`} />
                 <div className="jbt-box">
@@ -145,11 +146,29 @@ const Realtime: React.FC = () => {
                           message.warning('暂无结果信息');
                           return;
                         }
-                        setImgModalData(Object.assign({}, processResult, { label }))
+                        setImgModalData(Object.assign({}, processResult, { label, backImgType }))
                       }}
                     />
                   })}
                 </div>
+                {
+                  systemType === 'jbt' ?
+                    <div className="back-img-type flex-box">
+                      {
+                        backImgType === 2 ?
+                          <Button style={{ marginRight: 8 }} type="primary" >2D</Button>
+                          :
+                          <Button style={{ marginRight: 8 }} onClick={() => setBackImgType(2)}>2D</Button>
+                      }
+                      {
+                        backImgType === 3 ?
+                          <Button style={{ marginRight: 8 }} type="primary" >3D</Button>
+                          :
+                          <Button style={{ marginRight: 8 }} onClick={() => setBackImgType(3)}>3D</Button>
+                      }
+                    </div>
+                    : null
+                }
               </Fragment>
               :
               (current1.imageUrl && <div

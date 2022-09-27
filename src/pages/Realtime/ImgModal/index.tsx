@@ -1,5 +1,5 @@
 import './index.less';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Modal } from 'antd';
 import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 import * as _ from 'lodash';
@@ -12,7 +12,7 @@ interface Props {
 
 const ImgModal: React.FC<Props> = (props) => {
     const { data = {}, onCancel, } = props;
-    const { globalSrcPath = '', boundingBoxes = [], label, } = data;
+    const { globalSrcPath = '', boundingBoxes = [], label, backImgType, } = data;
     // @ts-ignore
     const systemType = window?.QUALITY_CONFIG?.type;
     const [selectedUrl, setSelectedUrl] = useState(0);
@@ -27,7 +27,15 @@ const ImgModal: React.FC<Props> = (props) => {
             console.log('ImgModal27', res);
             setImgSize(width / height);
         }
-    }, [globalSrcPath])
+    }, [globalSrcPath]);
+
+    const showImg = useMemo(() => {
+        if (systemType === 'jbt') {
+            const parent = (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcImages.filter(i => i.type == backImgType);
+            return parent[selectedNum]?.imgUrl;
+        }
+        return (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcList[selectedNum];
+    }, [label, boundingBoxes, selectedUrl, selectedNum, backImgType, systemType]);
 
     return (
         <Modal
@@ -84,7 +92,7 @@ const ImgModal: React.FC<Props> = (props) => {
                 <div
                     className={`${systemType === 'ym' ? 'body-bottom' : 'body-right'} flex-box`}
                     style={{
-                        backgroundImage: `url(${(!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcList[selectedNum] || ''})`
+                        backgroundImage: `url(${showImg || ''})`
                     }}
                 >
                     {

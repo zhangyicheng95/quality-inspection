@@ -16,14 +16,15 @@ const systemType = window?.QUALITY_CONFIG?.type;
 const History = () => {
     const [form] = Form.useForm()
     const { height } = useResize()
-    const [curHeight, setCurHeight] = useState<number>(height)
-    const [imgModalData, setImgModalData] = useState<any>({});
     const {
         setReady, setOrderQuery, imgQuery, setImgQuery, orderList, loadOrderList,
         unmount, handleViewOrder, setImgDrawerVisible, setCurrentOrderId,
         handleOrderDetail, processResult, setProcessResult,
     } = useModel('history' as any)
     const query = history?.location?.query || {}
+    const [curHeight, setCurHeight] = useState<number>(height)
+    const [imgModalData, setImgModalData] = useState<any>({});
+    const [backImgType, setBackImgType] = useState(2);
 
     useEffect(() => unmount, [])
     useEffect(() => {
@@ -46,6 +47,23 @@ const History = () => {
         setCurHeight(Math.max(height, 700))
     }, [height])
 
+    useEffect(() => {
+        if (isObject(processResult) && !isEmpty(processResult) && (systemType === 'ym' || systemType === 'xd')) {
+            setImgModalData(Object.assign({}, processResult,
+                //@ts-ignore
+                !!processResult?.bounding_boxes ? {
+                    //@ts-ignore
+                    globalSrcPath: processResult?.global_src_path,
+                    //@ts-ignore
+                    boundingBoxes: processResult?.bounding_boxes.map(
+                        (item: any) => Object.assign({}, item, {
+                            localSrcList: item?.local_src_list
+                        })
+                    ),
+                } : {}))
+        }
+    }, [processResult, systemType]);
+
     const columns = [
         { key: 'index', dataIndex: 'index', title: '序号', width: 50, align: 'center' },
         { key: 'orderId', dataIndex: 'orderId', title: '订单号' },
@@ -66,20 +84,13 @@ const History = () => {
             render: (_, record) => {
                 const { orderId } = record;
                 return <div className="flex-box">
-                    {
-                        (systemType === 'jbt' || systemType === 'tbg') ?
-                            <Fragment>
-                                <Button
-                                    type="text"
-                                    onClick={() => handleOrderDetail(orderId)}
-                                >
-                                    查看历史
-                                </Button>
-                                <div className="operation-line" />
-                            </Fragment>
-                            :
-                            null
-                    }
+                    <Button
+                        type="text"
+                        onClick={() => handleOrderDetail(orderId)}
+                    >
+                        查看历史
+                    </Button>
+                    <div className="operation-line" />
                     <Button
                         type="text"
                         onClick={() => handleViewOrder(record)}
@@ -140,7 +151,7 @@ const History = () => {
                 className="page-history-order-list"
                 columns={columns as any}
                 rowKey="id"
-                dataSource={([{}, {}]).map((i, index) => ({
+                dataSource={((orderList?.contents || [])).map((i, index) => ({
                     ...i,
                     index: index + 1
                 }))}
@@ -158,7 +169,7 @@ const History = () => {
 
             <Modal
                 className='page-history-img-modal'
-                visible={isObject(processResult) && !isEmpty(processResult)}
+                visible={isObject(processResult) && !isEmpty(processResult) && (systemType === 'jbt' || systemType === 'tbg')}
                 title={"预览结果"}
                 width="100vw"
                 centered
@@ -188,7 +199,7 @@ const History = () => {
                                     return;
                                 }
                                 setImgModalData(Object.assign({}, processResult, {
-                                    label,
+                                    label, backImgType,
                                 },
                                     //@ts-ignore
                                     !!processResult?.bounding_boxes ? {
@@ -197,7 +208,8 @@ const History = () => {
                                         //@ts-ignore
                                         boundingBoxes: processResult?.bounding_boxes.map(
                                             (item: any) => Object.assign({}, item, {
-                                                localSrcList: item?.local_src_list
+                                                localSrcList: item?.local_src_list,
+                                                localSrcImages: item?.local_src_images
                                             })
                                         ),
                                     } : {}))
@@ -205,13 +217,36 @@ const History = () => {
                         />
                     })}
                 </div>
+                {
+                    systemType === 'jbt' ?
+                        <div className="back-img-type flex-box">
+                            {
+                                backImgType === 2 ?
+                                    <Button style={{ marginRight: 8 }} type="primary" >2D</Button>
+                                    :
+                                    <Button style={{ marginRight: 8 }} onClick={() => setBackImgType(2)}>2D</Button>
+                            }
+                            {
+                                backImgType === 3 ?
+                                    <Button style={{ marginRight: 8 }} type="primary" >3D</Button>
+                                    :
+                                    <Button style={{ marginRight: 8 }} onClick={() => setBackImgType(3)}>3D</Button>
+                            }
+                        </div>
+                        : null
+                }
             </Modal>
 
             {
                 isObject(imgModalData) && !isEmpty(imgModalData) ?
                     <ImgModal
                         data={imgModalData}
-                        onCancel={() => setImgModalData({})}
+                        onCancel={() => {
+                            if (systemType === 'ym' || systemType === 'xd') {
+                                setProcessResult({});
+                            }
+                            setImgModalData({});
+                        }}
                     />
                     : null
             }
