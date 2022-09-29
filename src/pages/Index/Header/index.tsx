@@ -42,7 +42,7 @@ const Header: React.FC = () => {
             <div className="middle" onClick={() => setSettingVisible(true)}>
                 <span>{
                     //@ts-ignore
-                    localStorage.getItem("serverTitle") || window?.QUALITY_CONFIG?.title || '视觉质检'
+                    window?.QUALITY_CONFIG?.title || '视觉质检'
                 }</span>
             </div>
             <div className="right">
@@ -103,14 +103,14 @@ const Header: React.FC = () => {
                             // layout={'vertical'}
                             scrollToFirstError
                         >
-                            <Form.Item
+                            {/* <Form.Item
                                 name="serverTitle"
                                 label="项目名称"
                                 initialValue={localStorage.getItem("serverTitle") || undefined}
                                 rules={[{ required: true, message: "项目名称" }]}
                             >
                                 <Input placeholder="专汽车架纵梁压铆成型检测" />
-                            </Form.Item>
+                            </Form.Item> */}
                             {
                                 pathname === '/realtime' ?
                                     <Form.Item
