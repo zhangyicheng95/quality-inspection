@@ -4,6 +4,7 @@
   "private": true,
   "description": "质检",
   "type": "module",
+  "homepage": ".",
   "scripts": {
     "build": "umi build",
     "start": "cross-env UMI_ENV=dev umi dev",

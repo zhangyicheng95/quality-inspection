@@ -1,16 +1,18 @@
 import { request } from 'umi';
-
-const BASE_IP = localStorage.getItem("ipUrl-history") || 'localhost:8888';
+const { origin, pathname = '/', href } = window.location;
+const BASE_IP = (href.indexOf('iframe') > -1 || pathname !== '/') ? `${origin + pathname}` :
+    `http://${localStorage.getItem("ipUrl-history")}${pathname}` || `http://localhost:19820${pathname}`;
+console.log(window.location)
 // 历史数据
-export const queryOrderList = params => request(`http://${BASE_IP}/track/order/list/v1`, { params });
-export const getOrderDetail = orderId => request(`http://${BASE_IP}/track/order/post/detail?orderId=${orderId}`, { method: 'POST', });
-export const queryImgList = params => request(`http://${BASE_IP}/track/pic/list/v1`, { params });
-export const getSiblingImg = params => request(`http://${BASE_IP}/track/pic/next`, { params })
+export const queryOrderList = params => request(`${BASE_IP}track/order/list/v1`, { params });
+export const getOrderDetail = orderId => request(`${BASE_IP}track/order/post/detail?orderId=${orderId}`, { method: 'POST', });
+export const queryImgList = params => request(`${BASE_IP}track/pic/list/v1`, { params });
+export const getSiblingImg = params => request(`${BASE_IP}track/pic/next`, { params })
 export const auditImg = data => request(
-    `http://${BASE_IP}/track/pic`,
+    `${BASE_IP}/track/pic`,
     { method: 'POST', data }
 )
 
 // 数据统计
-export const staticsOrderList = params => request(`http://${BASE_IP}/track/statics/order`, { params });
-export const staticsImgList = params => request(`http://${BASE_IP}/track/statics/img`, { params });
+export const staticsOrderList = params => request(`${BASE_IP}track/statics/order`, { params });
+export const staticsImgList = params => request(`${BASE_IP}track/statics/img`, { params });

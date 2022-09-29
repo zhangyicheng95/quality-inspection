@@ -50,7 +50,7 @@ const DataStatistics = () => {
         form.resetFields();
     }
     const isIframe = useMemo(() => {
-        return window.location.hash.split('?')[1] === 'iframe';
+        return window.location.hash.indexOf('iframe') > -1;
     }, [window.location.hash]);
 
     return (

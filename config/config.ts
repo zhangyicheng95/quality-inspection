@@ -27,12 +27,14 @@ export default defineConfig({
     esbuild: {},
     title: false,
     ignoreMomentLocale: true,
-    nodeModulesTransform: {type: 'none', exclude: []},
+    nodeModulesTransform: { type: 'none', exclude: [] },
     proxy: proxy[REACT_APP_ENV || 'dev'],
     manifest: {
         basePath: '/',
     },
-    headScripts: [{src: '/env-config.js'}],
+    base: './',  // 打包路径
+    publicPath: './',  // 资源访问路径
+    headScripts: [{ src: './env-config.js' }],
     // Fast Refresh 热更新
     fastRefresh: {},
     mock: !!MOCK ? {} : false,

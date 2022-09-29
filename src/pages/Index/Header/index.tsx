@@ -19,7 +19,7 @@ const Header: React.FC = () => {
     }, 500)
 
     const isIframe = useMemo(() => {
-        return window.location.hash.split('?')[1] === 'iframe';
+        return window.location.hash.indexOf('iframe') > -1;
     }, [window.location.hash]);
 
     if (isIframe) {
