@@ -29,7 +29,7 @@ const Header: React.FC = () => {
                 window.open(href, '_blank');
             }}>
                 { //@ts-ignore
-                    localStorage.getItem("serverTitle") || window?.QUALITY_CONFIG?.title || '视觉质检'
+                    window?.QUALITY_CONFIG?.title || '视觉质检'
                 }
             </span>
         </div>
