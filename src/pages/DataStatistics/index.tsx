@@ -33,13 +33,14 @@ const DataStatistics = () => {
     useEffect(() => {
         console.log('orderList', orderList)
         if (_.isObject(orderList) && !_.isEmpty(orderList)) {
-            setChartsData(() => {
-                return Object.entries(orderList).map((item: any) => {
-                    const { normal, abNormal } = item[1];
-                    return [_.isArray(normal) ? normal.length : normal || undefined, _.isArray(abNormal) ? abNormal.length : abNormal || undefined];
-                })
-            });
-            setChartsFooter(Object.keys(orderList));
+            const result = Object.entries(orderList).sort((a: any, b: any) => a[0] - b[0]).map((item: any) => {
+                const { normal, abNormal } = item[1];
+                const footer = new Date(item[0]).getTime();
+                const data = [_.isArray(normal) ? normal.length : normal || undefined, _.isArray(abNormal) ? abNormal.length : abNormal || undefined];
+                return [footer, data];
+            }).sort();
+            setChartsData(result.map(item => item[1]));
+            setChartsFooter(result.map(item => moment(item[0]).format('YYYY-MM-DD')));
         } else {
             setChartsData([[0, 0]]);
             setChartsFooter([moment().format('YYYY-MM-DD HH:mm:ss')]);
