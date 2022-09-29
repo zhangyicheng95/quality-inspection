@@ -39,7 +39,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
             yAxis: {
                 type: 'value',
                 fontSize: 14,
-                splitNumber: 3,
+                splitNumber: data.length === 1 ? 1 : 3,
                 axisLabel: {
                     color: '#ddd'
                     // fontFamily:'serif',

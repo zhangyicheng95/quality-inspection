@@ -41,6 +41,8 @@ const DataStatistics = () => {
             });
             setChartsFooter(Object.keys(orderList));
         } else {
+            setChartsData([[0, 0]]);
+            setChartsFooter([moment().format('YYYY-MM-DD HH:mm:ss')]);
             // setChartsData([[320, 120], [132, 302], [301, 101], [334, 134], [390, 90], [330, 230], [320, 210]]);
             // setChartsFooter([1662376480307, 1662376580307, 1662376680307, 1662376780307, 1662376880307, 1662376980307, 1662377080307]);
         }
