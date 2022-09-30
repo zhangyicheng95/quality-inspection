@@ -1,5 +1,5 @@
 import './index.less'
-import react, { useState, useEffect, Fragment, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Modal, message, Form, Input } from 'antd';
 import usePolling from '@/hooks/usePolling'
 import moment from 'moment'
@@ -10,7 +10,7 @@ const Header: React.FC = () => {
     const [dateTimeStr, setDateTimeStr] = useState<string>('')
     const { pathname } = useLocation();
     const [form] = Form.useForm();
-    const { validateFields, resetFields, getFieldsValue, setFieldsValue } = form;
+    const { validateFields, } = form;
     const [settingVisible, setSettingVisible] = useState(false);
 
     usePolling(() => {
