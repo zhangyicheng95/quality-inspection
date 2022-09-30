@@ -23,9 +23,9 @@ const ImgModal: React.FC<Props> = (props) => {
         const img = new Image();
         img.src = globalSrcPath;
         img.onload = (res: any) => {
-            const { width, height } = res;
-            console.log('ImgModal27', res);
-            setImgSize(width / height);
+            const { naturalWidth, naturalHeight } = res?.path[0];
+            console.log('ImgModal27', naturalWidth, naturalHeight);
+            setImgSize(naturalWidth / naturalHeight);
         }
     }, [globalSrcPath]);
 
