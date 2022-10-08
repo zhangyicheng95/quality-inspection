@@ -17,25 +17,24 @@ const ImgModal: React.FC<Props> = (props) => {
     const systemType = window?.QUALITY_CONFIG?.type;
     const [selectedUrl, setSelectedUrl] = useState(0);
     const [selectedNum, setSelectedNum] = useState(0);
-    const [imgSize, setImgSize] = useState(0);
-
-    useEffect(() => {
-        const img = new Image();
-        img.src = globalSrcPath;
-        img.onload = (res: any) => {
-            const { naturalWidth, naturalHeight } = res?.path[0];
-            console.log('ImgModal27', naturalWidth, naturalHeight);
-            setImgSize(naturalWidth / naturalHeight);
-        }
-    }, [globalSrcPath]);
 
     const showImg = useMemo(() => {
         if (systemType === 'jbt') {
             const parent = (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcImages?.filter(i => i.type == backImgType);
+            console.log(parent, selectedNum);
             return parent[selectedNum]?.imgUrl;
         }
         return (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcList[selectedNum];
     }, [label, boundingBoxes, selectedUrl, selectedNum, backImgType, systemType]);
+
+    useEffect(() => {
+        const img = new Image();
+        img.src = globalSrcPath;
+        img.onload = (res) => {
+            const { width, height } = img;
+            console.log(35, width, height);
+        };
+    }, [globalSrcPath]);
 
     return (
         <Modal
@@ -55,7 +54,9 @@ const ImgModal: React.FC<Props> = (props) => {
                     className={systemType === 'ym' ? 'body-top' : "body-left"}
                     style={{
                         backgroundImage: `url(${globalSrcPath || ''})`,
-                        backgroundSize: imgSize > 1 ? '100% auto' : 'auto 100%'
+                        backgroundSize: (systemType === 'jbt' || systemType === 'xd') ? '100% 100%' : 'auto 100%',
+                        width: systemType === 'ym' ? '100%' : systemType === 'jbt' ? '40%' :
+                            systemType === 'tbg' ? '40%' : '20%'
                     }}
                 >
                     {
@@ -92,7 +93,8 @@ const ImgModal: React.FC<Props> = (props) => {
                 <div
                     className={`${systemType === 'ym' ? 'body-bottom' : 'body-right'} flex-box`}
                     style={{
-                        backgroundImage: `url(${showImg || ''})`
+                        backgroundImage: `url(${showImg || ''})`,
+                        width: systemType === 'ym' ? '100%' : systemType === 'jbt' ? '60%' : '80%'
                     }}
                 >
                     {

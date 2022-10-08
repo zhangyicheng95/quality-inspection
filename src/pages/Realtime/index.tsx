@@ -35,7 +35,6 @@ const Realtime: React.FC = () => {
   const [imgViewerData, setImgViewerData] = useState<any>({});
   const [imgViewerVisible, setImgViewerVisible] = useState<boolean>(false);
   const [imgModalData, setImgModalData] = useState<any>({});
-  const [imgSize, setImgSize] = useState(0);
   const [backImgType, setBackImgType] = useState(2);
   // @ts-ignore
   const systemType = window?.QUALITY_CONFIG?.type;
@@ -49,13 +48,6 @@ const Realtime: React.FC = () => {
   }, []);
   useEffect(() => {
     setCurrent1(result[0] || {});
-    const img = new Image();
-    img.src = current1.imageUrl;
-    img.onload = (res: any) => {
-      const { width, height } = res;
-      console.log('ImgModal55', res);
-      setImgSize(width / height);
-    }
   }, [result]);
   useEffect(() => {
     if (!isEmpty(processResult)) {
@@ -175,7 +167,7 @@ const Realtime: React.FC = () => {
                 className='img'
                 style={{
                   backgroundImage: `url(${current1.imageUrl})`,
-                  backgroundSize: imgSize > 1 ? '100% auto' : 'auto 100%'
+                  backgroundSize: 'auto 100%'
                 }}
                 onClick={handleViewImg(current1)}
               />)
