@@ -62,7 +62,10 @@ const ImgModal: React.FC<Props> = (props) => {
                     {
                         (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes).map(
                             (item: any, index: number) => {
-                                const { points, } = item;
+                                const { points, pointsType } = item;
+                                if ((systemType === 'jbt' || systemType === 'tbg') && backImgType != pointsType[0]) {
+                                    return null;
+                                }
                                 return (
                                     <div
                                         key={index}
@@ -102,6 +105,10 @@ const ImgModal: React.FC<Props> = (props) => {
                             <LeftCircleOutlined className="left-icon" onClick={() => setSelectedNum(prev => prev - 1)} />
                             :
                             <LeftCircleOutlined className="left-icon" style={{ color: 'gray', cursor: 'not-allowed' }} />
+                    }
+                    {
+                        !!showImg ? null :
+                            <div style={{ color: '#fff', fontSize: 16 }}>暂无结果图片</div>
                     }
                     {
                         (selectedNum < (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcList.length - 1) ?

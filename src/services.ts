@@ -16,3 +16,4 @@ export const auditImg = data => request(
 // 数据统计
 export const staticsOrderList = params => request(`${BASE_IP}track/statics/order`, { params });
 export const staticsImgList = params => request(`${BASE_IP}track/statics/img`, { params });
+export const staticsLabelList = params => request(`${BASE_IP}track/statics/label`, { params });

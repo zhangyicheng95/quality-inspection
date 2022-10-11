@@ -90,6 +90,15 @@ const DataStatistics = () => {
                                     >
                                         图片维度
                                     </div>
+                                    <div
+                                        className={classNames("statistic-btn", { active: currentType === 'label' })}
+                                        onClick={() => {
+                                            setCurrentType('label');
+                                            onCancel();
+                                        }}
+                                    >
+                                        焊缝维度
+                                    </div>
                                 </Col>
                                 <Col span={6} offset={2}>
                                     <Form.Item label="发生时间" name="timeRange" >

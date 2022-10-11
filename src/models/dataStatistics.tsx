@@ -1,4 +1,4 @@
-import { staticsOrderList, staticsImgList, queryImgList, getSiblingImg, auditImg } from "@/services";
+import { staticsOrderList, staticsImgList, queryImgList, getSiblingImg, auditImg, staticsLabelList } from "@/services";
 import { useEffect, useState } from 'react';
 import { message } from 'antd';
 
@@ -90,8 +90,21 @@ export default () => {
                     message.error(res?.message || '接口异常');
                 }
             });
-        } else {
+        } else if (currentType === 'img') {
             staticsImgList(
+                formatQuery({
+                    ...rest,
+                })
+            ).then((res) => {
+                console.log('res', res);
+                if (res) {
+                    setOrderList(res);
+                } else {
+                    message.error(res?.message || '接口异常');
+                }
+            });
+        } else if (currentType === 'label') {
+            staticsLabelList(
                 formatQuery({
                     ...rest,
                 })
