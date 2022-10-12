@@ -133,7 +133,7 @@ const DataStatistics = () => {
                                 return Object.assign({}, pre, {
                                     qualified: seriesId === 'normal' ? 1 : -1
                                 }, currentType === 'label' ? {} : {
-                                    timeRange: [moment(new Date(Number(name)).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(Number(name)).getTime() + 16 * 60 * 60 * 1000 - 1000)],
+                                    timeRange: [moment(new Date(name).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(name).getTime() + 16 * 60 * 60 * 1000 - 1000)],
                                 })
                             })
                             if (prev === 'order') {
