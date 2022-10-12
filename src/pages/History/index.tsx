@@ -120,7 +120,7 @@ const History = () => {
                         </Form.Item>
                     </Col>
                     <Col span={6} offset={2}>
-                        <Form.Item label="发生时间" name="timeRange">
+                        <Form.Item label="订单时间" name="timeRange">
                             <RangePicker showTime />
                         </Form.Item>
                     </Col>

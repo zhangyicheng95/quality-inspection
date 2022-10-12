@@ -35,19 +35,19 @@ const DataStatistics = () => {
         if (_.isObject(orderList) && !_.isEmpty(orderList)) {
             const result = Object.entries(orderList).sort((a: any, b: any) => a[0] - b[0]).map((item: any) => {
                 const { normal, abNormal } = item[1];
-                const footer = item[0].length < 3 ? item[0] : new Date(item[0]).getTime();
+                const footer = currentType === 'label' ? item[0] : new Date(item[0]).getTime();
                 const data = [_.isArray(normal) ? normal.length : normal || undefined, _.isArray(abNormal) ? abNormal.length : abNormal || undefined];
                 return [footer, data];
             }).sort();
             setChartsData(result.map(item => item[1]));
-            setChartsFooter(result.map(item => item[0].length < 3 ? item[0] : moment(item[0]).format('YYYY-MM-DD')));
+            setChartsFooter(result.map(item => currentType === 'label' ? item[0] : moment(item[0]).format('YYYY-MM-DD')));
         } else {
             setChartsData([[0, 0]]);
             setChartsFooter([moment().format('YYYY-MM-DD HH:mm:ss')]);
             // setChartsData([[320, 120], [132, 302], [301, 101], [334, 134], [390, 90], [330, 230], [320, 210]]);
             // setChartsFooter([1662376480307, 1662376580307, 1662376680307, 1662376780307, 1662376880307, 1662376980307, 1662377080307]);
         }
-    }, [orderList]);
+    }, [orderList, currentType]);
 
     const onCancel = () => {
         form.resetFields();
@@ -71,7 +71,7 @@ const DataStatistics = () => {
                             <div className="left-ghost top" />
                             <div className="left-ghost bottom" />
                             <Row gutter={24}>
-                                <Col span={4} className="statistic-btn-box">
+                                <Col span={7} className="statistic-btn-box">
                                     <div
                                         className={classNames("statistic-btn", { active: currentType === 'order' })}
                                         onClick={() => {
@@ -100,12 +100,12 @@ const DataStatistics = () => {
                                         焊缝维度
                                     </div>
                                 </Col>
-                                <Col span={6} offset={2}>
+                                <Col span={7} offset={2}>
                                     <Form.Item label="发生时间" name="timeRange" >
                                         <RangePicker showTime />
                                     </Form.Item>
                                 </Col>
-                                <Col span={10} offset={2} className="btns">
+                                <Col span={6} offset={2} className="btns">
                                     <Button type="primary" htmlType="submit">
                                         搜索
                                     </Button>
@@ -129,10 +129,11 @@ const DataStatistics = () => {
                         setCurrentType((prev: string) => {
                             console.log(e);
                             const { name, seriesId, dataIndex } = e;
-                            setImgQuery((prev: any) => {
-                                return Object.assign({}, prev, {
-                                    timeRange: [moment(new Date(name).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(name).getTime() + 16 * 60 * 60 * 1000 - 1000)],
+                            setImgQuery((pre: any) => {
+                                return Object.assign({}, pre, {
                                     qualified: seriesId === 'normal' ? 1 : -1
+                                }, currentType === 'label' ? {} : {
+                                    timeRange: [moment(new Date(Number(name)).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(Number(name)).getTime() + 16 * 60 * 60 * 1000 - 1000)],
                                 })
                             })
                             if (prev === 'order') {
