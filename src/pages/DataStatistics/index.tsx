@@ -10,6 +10,8 @@ import * as _ from 'lodash';
 import moment from 'moment';
 
 const RangePicker: any = DatePicker.RangePicker;
+// @ts-ignore
+const systemType = window?.QUALITY_CONFIG?.type;
 
 const DataStatistics = () => {
     const [form] = Form.useForm();
@@ -34,7 +36,7 @@ const DataStatistics = () => {
         form.setFieldsValue({
             timeRange: [moment(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]
         })
-    }, []);
+    }, [currentType]);
 
     useEffect(() => {
         console.log('orderList', orderList)
@@ -107,15 +109,19 @@ const DataStatistics = () => {
                                     >
                                         图片维度
                                     </div>
-                                    {/* <div
-                                        className={classNames("statistic-btn", { active: currentType === 'label' })}
-                                        onClick={() => {
-                                            setCurrentType('label');
-                                            onCancel();
-                                        }}
-                                    >
-                                        焊缝维度
-                                    </div> */}
+                                    {
+                                        (systemType === 'jbt' || systemType === 'tbg') ?
+                                            <div
+                                                className={classNames("statistic-btn", { active: currentType === 'label' })}
+                                                onClick={() => {
+                                                    setCurrentType('label');
+                                                    onCancel();
+                                                }}
+                                            >
+                                                焊缝维度
+                                            </div>
+                                            : null
+                                    }
                                 </Col>
                                 <Col span={7} offset={2}>
                                     <Form.Item label="发生时间" name="timeRange" >
