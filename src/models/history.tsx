@@ -34,6 +34,8 @@ const formatQuery = (query) => {
     return res
 };
 let preventNextQuery = false;
+// @ts-ignore
+const systemType = window?.QUALITY_CONFIG?.type;
 
 export default () => {
     const [ready, setReady] = useState<boolean>(false)
@@ -108,6 +110,7 @@ export default () => {
             page,
             size,
             ...query,
+            type: systemType === 'xd' ? 2 : 1
         })
         let data = { ...rest }
         if (isAudited !== 3) {
@@ -127,7 +130,9 @@ export default () => {
         if (isAudited !== 3) {
             Object.assign(data, { isAudited })
         }
-        const res = await getSiblingImg(data)
+        const res = await getSiblingImg(Object.assign({}, data, {
+            type: systemType === 'xd' ? 2 : 1
+        }))
         // console.log(res)
         res && setImgViewerData(res)
     }

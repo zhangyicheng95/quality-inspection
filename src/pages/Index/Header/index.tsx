@@ -77,7 +77,7 @@ const Header: React.FC = () => {
                     onOk={() => {
                         validateFields()
                             .then((values) => {
-                                localStorage.setItem("serverTitle", values['serverTitle']);
+                                // localStorage.setItem("serverTitle", values['serverTitle']);
                                 if (pathname === '/realtime') {
                                     localStorage.setItem("ipUrl-real", values['ipUrl-real']);
                                 } else {

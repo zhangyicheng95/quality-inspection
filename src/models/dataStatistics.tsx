@@ -11,7 +11,7 @@ const getInitialList = () => ({
 });
 const getInitialOrderQuery = (currentType = 'order') => ({
     currentType,
-    timeRange: [],
+    timeRange: [moment(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), moment(new Date().getTime())],
 });
 const getInitialImgQuery = () => ({
     id: undefined,

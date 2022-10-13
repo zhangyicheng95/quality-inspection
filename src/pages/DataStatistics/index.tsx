@@ -31,16 +31,33 @@ const DataStatistics = () => {
     }, [form])
 
     useEffect(() => {
+        form.setFieldsValue({
+            timeRange: [moment(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]
+        })
+    }, []);
+
+    useEffect(() => {
         console.log('orderList', orderList)
         if (_.isObject(orderList) && !_.isEmpty(orderList)) {
-            const result = Object.entries(orderList).sort((a: any, b: any) => a[0] - b[0]).map((item: any) => {
-                const { normal, abNormal } = item[1];
-                const footer = currentType === 'label' ? item[0] : new Date(item[0]).getTime();
-                const data = [_.isArray(normal) ? normal.length : normal || undefined, _.isArray(abNormal) ? abNormal.length : abNormal || undefined];
-                return [footer, data];
-            }).sort();
-            setChartsData(result.map(item => item[1]));
-            setChartsFooter(result.map(item => currentType === 'label' ? item[0] : moment(item[0]).format('YYYY-MM-DD')));
+            if (currentType === 'label') {
+                const result = Object.entries(orderList).map((item: any) => {
+                    const { normal, abNormal } = item[1];
+                    const footer = item[0];
+                    const data = [_.isArray(normal) ? normal.length : normal || undefined, _.isArray(abNormal) ? abNormal.length : abNormal || undefined];
+                    return [footer, data];
+                });
+                setChartsData(result.map(item => item[1]));
+                setChartsFooter(result.map(item => item[0]));
+            } else {
+                const result = Object.entries(orderList).sort((a: any, b: any) => a[0] - b[0]).map((item: any) => {
+                    const { normal, abNormal } = item[1];
+                    const footer = new Date(item[0]).getTime();
+                    const data = [_.isArray(normal) ? normal.length : normal || undefined, _.isArray(abNormal) ? abNormal.length : abNormal || undefined];
+                    return [footer, data];
+                }).sort();
+                setChartsData(result.map(item => item[1]));
+                setChartsFooter(result.map(item => moment(item[0]).format('YYYY-MM-DD')));
+            }
         } else {
             setChartsData([[0, 0]]);
             setChartsFooter([moment().format('YYYY-MM-DD HH:mm:ss')]);
@@ -90,7 +107,7 @@ const DataStatistics = () => {
                                     >
                                         图片维度
                                     </div>
-                                    <div
+                                    {/* <div
                                         className={classNames("statistic-btn", { active: currentType === 'label' })}
                                         onClick={() => {
                                             setCurrentType('label');
@@ -98,7 +115,7 @@ const DataStatistics = () => {
                                         }}
                                     >
                                         焊缝维度
-                                    </div>
+                                    </div> */}
                                 </Col>
                                 <Col span={7} offset={2}>
                                     <Form.Item label="发生时间" name="timeRange" >
