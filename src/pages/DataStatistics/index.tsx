@@ -18,6 +18,8 @@ const DataStatistics = () => {
     const [currentType, setCurrentType] = useState<string>('order');
     const [chartsData, setChartsData] = useState([]);
     const [chartsFooter, setChartsFooter] = useState([]);
+    const [timeRange, setTimeRange] = useState([]);
+
     const {
         setReady, setOrderQuery, imgDrawerVisible,
         orderList, unmount, handleViewOrder, setImgQuery,
@@ -35,7 +37,8 @@ const DataStatistics = () => {
     useEffect(() => {
         form.setFieldsValue({
             timeRange: [moment(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]
-        })
+        });
+        setTimeRange([moment(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]);
     }, [currentType]);
 
     useEffect(() => {
@@ -51,7 +54,24 @@ const DataStatistics = () => {
                 setChartsData(result.map(item => item[1]));
                 setChartsFooter(result.map(item => item[0]));
             } else {
-                const result = Object.entries(orderList).sort((a: any, b: any) => a[0] - b[0]).map((item: any) => {
+                const startTime = new Date(moment(timeRange[0]).format('YYYY-MM-DD')).getTime();
+                const endTime = new Date(moment(timeRange[1]).format('YYYY-MM-DD')).getTime();
+                console.log(startTime, endTime)
+                let obj = {};
+                if (Object.keys(orderList).length === ((endTime - startTime) / 1000 / 60 / 60 / 24 + 1)) {
+                    // 正常返回搜索天数的数据
+                    obj = Object.assign({}, orderList);
+                } else {
+                    // 返回的数据不足搜索天数
+                    for (let i = 0; i < ((endTime - startTime) / 1000 / 60 / 60 / 24); i++) {
+                        obj = Object.assign({}, obj, {
+                            [moment(new Date(startTime + i * 24 * 60 * 60 * 1000)).format('YYYY-MM-DD')]: { normal: 0, abNormal: 0 }
+                        });
+                    }
+                    obj = Object.assign({}, obj, orderList);
+                }
+                console.log(obj)
+                const result = Object.entries(obj).sort((a: any, b: any) => a[0] - b[0]).map((item: any) => {
                     const { normal, abNormal } = item[1];
                     const footer = new Date(item[0]).getTime();
                     const data = [_.isArray(normal) ? normal.length : normal || undefined, _.isArray(abNormal) ? abNormal.length : abNormal || undefined];
@@ -59,6 +79,7 @@ const DataStatistics = () => {
                 }).sort();
                 setChartsData(result.map(item => item[1]));
                 setChartsFooter(result.map(item => moment(item[0]).format('YYYY-MM-DD')));
+
             }
         } else {
             setChartsData([[0, 0]]);
@@ -85,7 +106,10 @@ const DataStatistics = () => {
                             form={form}
                             className="page-history-order-query"
                             initialValues={{}}
-                            onFinish={(values) => setOrderQuery({ ...values, currentType })}
+                            onFinish={(values) => {
+                                setTimeRange(values.timeRange);
+                                setOrderQuery({ ...values, currentType });
+                            }}
                         >
                             <div className="left-ghost top" />
                             <div className="left-ghost bottom" />
@@ -149,13 +173,17 @@ const DataStatistics = () => {
                     data={chartsData}
                     Xdata={chartsFooter}
                     onClick={(e: any) => {
+                        if (isIframe) {
+                            const href = window.location.href.split('?')[0];
+                            window.open(href, '_blank');
+                            return;
+                        }
                         setCurrentType((prev: string) => {
-                            console.log(e);
                             const { name, seriesId, dataIndex } = e;
                             setImgQuery((pre: any) => {
                                 return Object.assign({}, pre, {
                                     qualified: seriesId === 'normal' ? 1 : -1
-                                }, currentType === 'label' ? {} : {
+                                }, prev === 'label' ? {} : {
                                     timeRange: [moment(new Date(name).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(name).getTime() + 16 * 60 * 60 * 1000 - 1000)],
                                 })
                             })
