@@ -54,7 +54,7 @@ const ImgModal: React.FC<Props> = (props) => {
                     className={systemType === 'ym' ? 'body-top' : "body-left"}
                     style={{
                         backgroundImage: `url(${globalSrcPath || ''})`,
-                        backgroundSize: (systemType === 'jbt' || systemType === 'xd') ? '100% 100%' : 'auto 100%',
+                        backgroundSize: systemType === 'tbg' ? 'auto 100%' : '100% 100%',
                         width: systemType === 'ym' ? '100%' : systemType === 'jbt' ? '40%' :
                             systemType === 'tbg' ? '40%' : '20%'
                     }}
