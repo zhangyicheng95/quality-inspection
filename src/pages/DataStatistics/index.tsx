@@ -58,14 +58,14 @@ const DataStatistics = () => {
                 const endTime = new Date(moment(timeRange[1]).format('YYYY-MM-DD')).getTime();
                 console.log(startTime, endTime)
                 let obj = {};
-                if (Object.keys(orderList).length === ((endTime - startTime) / 1000 / 60 / 60 / 24 + 1)) {
+                if (Object.keys(orderList).length === ((endTime - startTime) / 1000 / 60 / 60 / 24)) {
                     // 正常返回搜索天数的数据
                     obj = Object.assign({}, orderList);
                 } else {
                     // 返回的数据不足搜索天数
                     for (let i = 0; i < ((endTime - startTime) / 1000 / 60 / 60 / 24); i++) {
                         obj = Object.assign({}, obj, {
-                            [moment(new Date(startTime + i * 24 * 60 * 60 * 1000)).format('YYYY-MM-DD')]: { normal: 0, abNormal: 0 }
+                            [moment(new Date(endTime - i * 24 * 60 * 60 * 1000)).format('YYYY-MM-DD')]: { normal: 0, abNormal: 0 }
                         });
                     }
                     obj = Object.assign({}, obj, orderList);
