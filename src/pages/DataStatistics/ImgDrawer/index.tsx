@@ -43,15 +43,15 @@ interface Props {
 
 const ImgDrawer: React.FC<Props> = (props: any) => {
     const {
-        currentOrderIdList, setCurrentOrderId,
+        currentOrderIdList, currentOrderId, setCurrentOrderId,
         imgQuery, setImgQuery, imgList, loadImgList,
         imgDrawerVisible, setImgDrawerVisible, resetImgDrawer,
         imgViewerVisible, setImgViewerVisible, imgViewerData, setImgViewerData,
         handleAudit, loadSiblingImg
     } = useModel('dataStatistics' as any);
-    const [form] = Form.useForm()
-    const { height } = useResize()
-    const [curHeight, setCurHeight] = useState<number>(height)
+    const [form] = Form.useForm();
+    const { height } = useResize();
+    const [curHeight, setCurHeight] = useState<number>(height);
 
     useEffect(() => {
         setCurHeight(Math.max(height, 700))
@@ -62,8 +62,9 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
     }, [form, imgQuery])
 
     const handleViewImg = record => () => {
-        setImgViewerData(record)
-        setImgViewerVisible(true)
+        setCurrentOrderId(record.orderId);
+        setImgViewerData(record);
+        setImgViewerVisible(true);
     }
 
     const handleGetSiblingImg = (direction, id) => () => loadSiblingImg({

@@ -130,7 +130,7 @@ export default () => {
         const { page, size } = imgList
         const { isAudited, ...rest } = formatQuery({
             ...imgQuery,
-            orderId: currentOrderId,
+            // orderId: currentOrderId,
             page,
             size,
             ...query,
@@ -172,7 +172,10 @@ export default () => {
         ready && loadOrderList();
     }, [ready, orderQuery])
     useEffect(() => {
-        imgDrawerVisible && loadImgList({ page: 1, orderId: currentOrderId, })
+        imgDrawerVisible && loadImgList({
+            page: 1,
+            //  orderId: currentOrderId, 
+        })
     }, [ready, imgDrawerVisible, imgQuery, currentOrderId])
 
     return {

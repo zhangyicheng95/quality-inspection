@@ -24,10 +24,13 @@ const Header: React.FC = () => {
 
     if (isIframe) {
         return <div className="page-home-header-iframe">
-            <span onClick={() => {
-                const href = window.location.href.split('?')[0];
-                window.open(href, '_blank');
-            }}>
+            <span
+                style={{ transform: 'scale(0.6)' }}
+                onClick={() => {
+                    const href = window.location.href.split('?')[0];
+                    window.open(href, '_blank');
+                }}
+            >
                 { //@ts-ignore
                     window?.QUALITY_CONFIG?.title || '视觉质检'
                 }

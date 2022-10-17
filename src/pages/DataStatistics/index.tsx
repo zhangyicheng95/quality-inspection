@@ -12,13 +12,48 @@ import moment from 'moment';
 const RangePicker: any = DatePicker.RangePicker;
 // @ts-ignore
 const systemType = window?.QUALITY_CONFIG?.type;
+// 搅拌桶名称对应关系
+const labelFormat = (type: string) => {
+    switch (type) {
+        case '1':
+            return '法兰';
+            break;
+        case '2':
+            return '球罐';
+            break;
+        case '3':
+            return '前锥';
+            break;
+        case '4':
+            return '中桶';
+            break;
+        case '5':
+            return '小中桶';
+            break;
+        case '6':
+            return '后锥';
+            break;
+        case '7':
+            return '滚道(大)';
+            break;
+        case '8':
+            return '滚道(小)';
+            break;
+        case '9':
+            return '圈A';
+            break;
+        case '10':
+            return '圈B';
+            break;
+    }
+}
 
 const DataStatistics = () => {
     const [form] = Form.useForm();
     const [currentType, setCurrentType] = useState<string>('order');
     const [chartsData, setChartsData] = useState([]);
     const [chartsFooter, setChartsFooter] = useState([]);
-    const [timeRange, setTimeRange] = useState([]);
+    const [timeRange, setTimeRange] = useState([moment(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]);
 
     const {
         setReady, setOrderQuery, imgDrawerVisible,
@@ -52,7 +87,7 @@ const DataStatistics = () => {
                     return [footer, data];
                 });
                 setChartsData(result.map(item => item[1]));
-                setChartsFooter(result.map(item => item[0]));
+                setChartsFooter(result.map(item => labelFormat(item[0] + '')));
             } else {
                 const startTime = new Date(moment(timeRange[0]).format('YYYY-MM-DD')).getTime();
                 const endTime = new Date(moment(timeRange[1]).format('YYYY-MM-DD')).getTime();
@@ -82,8 +117,14 @@ const DataStatistics = () => {
 
             }
         } else {
-            setChartsData([[0, 0]]);
-            setChartsFooter([moment().format('YYYY-MM-DD')]);
+            setChartsData([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]);
+            setChartsFooter(prev => {
+                let obj = [];
+                for (let i = 0; i < 7; i++) {
+                    obj = obj.concat(moment(new Date().getTime() - i * 1000 * 60 * 60 * 24).format('YYYY-MM-DD'));
+                }
+                return obj.reverse();
+            });
             // setChartsData([[320, 120], [132, 302], [301, 101], [334, 134], [390, 90], [330, 230], [320, 210]]);
             // setChartsFooter([1662376480307, 1662376580307, 1662376680307, 1662376780307, 1662376880307, 1662376980307, 1662377080307]);
         }
@@ -188,7 +229,7 @@ const DataStatistics = () => {
                                 })
                             })
                             if (prev === 'order') {
-                                const data = Object.values(orderList)[dataIndex][seriesId];
+                                const data = chartsData[dataIndex][seriesId];
                                 handleViewOrder({ orderId: data });
                             } else {
                                 handleViewOrder({ orderId: '' });
