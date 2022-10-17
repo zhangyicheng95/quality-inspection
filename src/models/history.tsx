@@ -14,7 +14,7 @@ const getInitialOrderQuery = () => ({
 const getInitialImgQuery = () => ({
     id: undefined,
     timeRange: [],
-    qualified: -1,
+    qualified: 0,
     isAudited: 3,
 });
 const formatQuery = (query) => {
