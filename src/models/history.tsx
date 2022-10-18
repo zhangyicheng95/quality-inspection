@@ -84,6 +84,7 @@ export default () => {
                 page,
                 size,
                 ...query,
+                type: systemType === 'xd' ? 2 : 1
             })
         )
         if (res) {
