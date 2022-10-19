@@ -18,6 +18,15 @@ const ImgModal: React.FC<Props> = (props) => {
     const [selectedUrl, setSelectedUrl] = useState(0);
     const [selectedNum, setSelectedNum] = useState(0);
 
+    const list = useMemo(() => {
+        return (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes).filter(i => {
+            if ((systemType === 'jbt' || systemType === 'tbg') && backImgType != i?.pointsType[0]) {
+                return null;
+            }
+            return i;
+        }).filter(Boolean);
+    }, [label, boundingBoxes, systemType, backImgType])
+
     const showImg = useMemo(() => {
         if (systemType === 'jbt') {
             const parent = (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcImages?.filter(i => i.type == backImgType);
@@ -60,7 +69,7 @@ const ImgModal: React.FC<Props> = (props) => {
                     }}
                 >
                     {
-                        (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes).map(
+                        (list || []).map(
                             (item: any, index: number) => {
                                 const { points, pointsType } = item;
                                 if ((systemType === 'jbt' || systemType === 'tbg') && backImgType != pointsType[0]) {

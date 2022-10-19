@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import BarCharts from './BarCharts';
 import * as _ from 'lodash';
 import moment from 'moment';
+import PieCharts from './PieCharts';
 
 const RangePicker: any = DatePicker.RangePicker;
 // @ts-ignore
@@ -53,7 +54,9 @@ const DataStatistics = () => {
     const [currentType, setCurrentType] = useState<string>('order');
     const [chartsData, setChartsData] = useState([]);
     const [chartsFooter, setChartsFooter] = useState([]);
-    const [timeRange, setTimeRange] = useState([moment(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]);
+    const [pieChartsData, setPieChartsData] = useState([]);
+    const [pieChartsTitle, setPieChartsTitle] = useState('法兰');
+    const [timeRange, setTimeRange] = useState([moment(new Date().getTime() - 6 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]);
 
     const {
         setReady, setOrderQuery, imgDrawerVisible,
@@ -71,13 +74,16 @@ const DataStatistics = () => {
 
     useEffect(() => {
         form.setFieldsValue({
-            timeRange: [moment(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]
+            timeRange: [moment(new Date().getTime() - 6 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]
         });
-        setTimeRange([moment(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]);
+        setTimeRange([moment(new Date().getTime() - 6 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]);
     }, [currentType]);
 
     useEffect(() => {
         console.log('orderList', orderList)
+        const startTime = new Date(moment(timeRange[0]).format('YYYY-MM-DD')).getTime();
+        const endTime = new Date(moment(timeRange[1]).format('YYYY-MM-DD')).getTime();
+        console.log((endTime - startTime) / 1000 / 60 / 60 / 24)
         if (_.isObject(orderList) && !_.isEmpty(orderList)) {
             if (currentType === 'label') {
                 const result = Object.entries(orderList).map((item: any) => {
@@ -88,24 +94,21 @@ const DataStatistics = () => {
                 });
                 setChartsData(result.map(item => item[1]));
                 setChartsFooter(result.map(item => labelFormat(item[0] + '')));
+                setPieChartsData([{ name: '正常', value: result[0][1][0] }, { name: '异常', value: result[0][1][1] }])
             } else {
-                const startTime = new Date(moment(timeRange[0]).format('YYYY-MM-DD')).getTime();
-                const endTime = new Date(moment(timeRange[1]).format('YYYY-MM-DD')).getTime();
-                console.log(startTime, endTime)
                 let obj = {};
-                if (Object.keys(orderList).length === ((endTime - startTime) / 1000 / 60 / 60 / 24)) {
+                if (Object.keys(orderList).length === ((endTime - startTime) / 1000 / 60 / 60 / 24 + 1)) {
                     // 正常返回搜索天数的数据
                     obj = Object.assign({}, orderList);
                 } else {
                     // 返回的数据不足搜索天数
-                    for (let i = 0; i < ((endTime - startTime) / 1000 / 60 / 60 / 24); i++) {
+                    for (let i = 0; i < ((endTime - startTime) / 1000 / 60 / 60 / 24 + 1); i++) {
                         obj = Object.assign({}, obj, {
-                            [moment(new Date(endTime - i * 24 * 60 * 60 * 1000)).format('YYYY-MM-DD')]: { normal: 0, abNormal: 0 }
+                            [moment(new Date(startTime + i * 24 * 60 * 60 * 1000)).format('YYYY-MM-DD')]: { normal: 0, abNormal: 0 }
                         });
                     }
                     obj = Object.assign({}, obj, orderList);
                 }
-                console.log(obj)
                 const result = Object.entries(obj).sort((a: any, b: any) => a[0] - b[0]).map((item: any) => {
                     const { normal, abNormal } = item[1];
                     const footer = new Date(item[0]).getTime();
@@ -114,21 +117,38 @@ const DataStatistics = () => {
                 }).sort();
                 setChartsData(result.map(item => item[1]));
                 setChartsFooter(result.map(item => moment(item[0]).format('YYYY-MM-DD')));
+                setPieChartsData(() => {
+                    let normal = 0,
+                        abNormal = 0;
+                    result.forEach(item => {
+                        normal += (!!item[1][0] ? item[1][0] : 0);
+                        abNormal += (!!item[1][1] ? item[1][1] : 0);
+                    });
+                    return [{ name: '正常', value: normal }, { name: '异常', value: abNormal }];
+                })
 
             }
         } else {
             setChartsData([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]);
             setChartsFooter(prev => {
-                let obj = [];
-                for (let i = 0; i < 7; i++) {
-                    obj = obj.concat(moment(new Date().getTime() - i * 1000 * 60 * 60 * 24).format('YYYY-MM-DD'));
+                if (currentType === 'label') {
+                    let obj = [];
+                    for (let i = 1; i < 11; i++) {
+                        obj = obj.concat(labelFormat(i + ''));
+                    }
+                    return obj;
                 }
-                return obj.reverse();
+                let obj = [];
+                for (let i = 0; i < ((endTime - startTime) / 1000 / 60 / 60 / 24 + 1); i++) {
+                    obj = obj.concat(moment(new Date(startTime + i * 24 * 60 * 60 * 1000)).format('YYYY-MM-DD'));
+                }
+                return obj;
             });
-            // setChartsData([[320, 120], [132, 302], [301, 101], [334, 134], [390, 90], [330, 230], [320, 210]]);
-            // setChartsFooter([1662376480307, 1662376580307, 1662376680307, 1662376780307, 1662376880307, 1662376980307, 1662377080307]);
+            setPieChartsData([{ name: '正常', value: 0 }, { name: '异常', value: 0 }])
+            setChartsData([[320, 120], [132, 302], [301, 101], [334, 134], [390, 90], [330, 230], [320, 210]]);
+            setChartsFooter([labelFormat('1'), labelFormat('2'), labelFormat('3'), 4, 5, 6, 7]);
         }
-    }, [orderList, currentType]);
+    }, [orderList, currentType, timeRange]);
 
     const onCancel = () => {
         form.resetFields();
@@ -209,36 +229,49 @@ const DataStatistics = () => {
                         </Form>
                     </Fragment>
             }
-            <div className="page-history-order-list" style={isIframe ? { height: '100%', margin: 0 } : {}}>
-                <BarCharts
-                    data={chartsData}
-                    Xdata={chartsFooter}
-                    onClick={(e: any) => {
-                        if (isIframe) {
-                            const href = window.location.href.split('?')[0];
-                            window.open(href, '_blank');
-                            return;
-                        }
-                        setCurrentType((prev: string) => {
-                            const { name, seriesId, dataIndex } = e;
-                            setImgQuery((pre: any) => {
-                                return Object.assign({}, pre, {
-                                    qualified: seriesId === 'normal' ? 1 : -1
-                                }, prev === 'label' ? {} : {
-                                    timeRange: [moment(new Date(name).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(name).getTime() + 16 * 60 * 60 * 1000 - 1000)],
-                                })
-                            })
-                            if (prev === 'order') {
-                                const data = chartsData[dataIndex][seriesId];
-                                handleViewOrder({ orderId: data });
-                            } else {
-                                handleViewOrder({ orderId: '' });
+            <div className="page-history-order-list flex-box" style={isIframe ? { height: '100%', margin: 0 } : {}}>
+                <div className="left">
+                    <BarCharts
+                        data={chartsData}
+                        Xdata={chartsFooter}
+                        onClick={(e: any) => {
+                            if (isIframe) {
+                                const href = window.location.href.split('?')[0];
+                                window.open(href, '_blank');
+                                return;
                             }
+                            setCurrentType((prev: string) => {
+                                const { name, seriesId, dataIndex } = e;
+                                setImgQuery((pre: any) => {
+                                    return Object.assign({}, pre, {
+                                        qualified: seriesId === 'normal' ? 1 : -1
+                                    }, prev === 'label' ? {} : {
+                                        timeRange: [moment(new Date(name).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(name).getTime() + 16 * 60 * 60 * 1000 - 1000)],
+                                    })
+                                })
+                                if (prev === 'order') {
+                                    const data = chartsData[dataIndex][seriesId];
+                                    handleViewOrder({ orderId: data });
+                                } else {
+                                    handleViewOrder({ orderId: '' });
+                                }
 
-                            return prev;
-                        })
-                    }}
-                />
+                                return prev;
+                            })
+                        }}
+                        onXClick={(e: any) => {
+                            const curData = chartsData[e.dataIndex];
+                            setPieChartsData([{ name: '正常', value: curData[0] }, { name: '异常', value: curData[1] }]);
+                            setPieChartsTitle(e.value);
+                        }}
+                    />
+                </div>
+                <div className="right">
+                    <PieCharts
+                        data={pieChartsData}
+                        title={currentType === 'label' ? pieChartsTitle : ''}
+                    />
+                </div>
             </div>
             {
                 imgDrawerVisible ?
