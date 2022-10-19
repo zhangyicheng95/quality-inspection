@@ -29,20 +29,20 @@ const ImgModal: React.FC<Props> = (props) => {
 
     const showImg = useMemo(() => {
         if (systemType === 'jbt') {
-            const parent = (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcImages?.filter(i => i.type == backImgType);
+            const parent = list[selectedUrl]?.localSrcImages?.filter(i => i.type == backImgType);
             console.log(parent, selectedNum);
             return parent[selectedNum]?.imgUrl;
         }
-        return (!!label ? boundingBoxes.filter(i => i.label == label) : boundingBoxes)[selectedUrl]?.localSrcList[selectedNum];
+        return list[selectedUrl]?.localSrcList[selectedNum];
     }, [label, boundingBoxes, selectedUrl, selectedNum, backImgType, systemType]);
 
     useEffect(() => {
-        const img = new Image();
-        img.src = globalSrcPath;
-        img.onload = (res) => {
-            const { width, height } = img;
-            console.log(35, width, height);
-        };
+        // const img = new Image();
+        // img.src = globalSrcPath;
+        // img.onload = (res) => {
+        // const { width, height } = img;
+        // console.log(35, width, height);
+        // };
     }, [globalSrcPath]);
 
     return (
