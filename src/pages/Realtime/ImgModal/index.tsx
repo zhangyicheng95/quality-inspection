@@ -28,10 +28,10 @@ const ImgModal: React.FC<Props> = (props) => {
     }, [label, boundingBoxes, systemType, backImgType])
 
     const showImg = useMemo(() => {
-        if (systemType === 'jbt') {
+        if (systemType === 'jbt' || systemType === 'tbg') {
             const parent = list[selectedUrl]?.localSrcImages?.filter(i => i.type == backImgType);
             console.log(parent, selectedNum);
-            return parent[selectedNum]?.imgUrl;
+            return !!parent && parent?.length && parent[selectedNum]?.imgUrl;
         }
         return list[selectedUrl]?.localSrcList[selectedNum];
     }, [label, boundingBoxes, selectedUrl, selectedNum, backImgType, systemType]);
@@ -64,8 +64,7 @@ const ImgModal: React.FC<Props> = (props) => {
                     style={{
                         backgroundImage: `url(${globalSrcPath || ''})`,
                         backgroundSize: systemType === 'tbg' ? 'auto 100%' : '100% 100%',
-                        width: systemType === 'ym' ? '100%' : systemType === 'jbt' ? '40%' :
-                            systemType === 'tbg' ? '40%' : '20%'
+                        width: systemType === 'ym' ? '100%' : (systemType === 'jbt' || systemType === 'tbg') ? '40%' : '20%'
                     }}
                 >
                     {
@@ -106,7 +105,7 @@ const ImgModal: React.FC<Props> = (props) => {
                     className={`${systemType === 'ym' ? 'body-bottom' : 'body-right'} flex-box`}
                     style={{
                         backgroundImage: `url(${showImg || ''})`,
-                        width: systemType === 'ym' ? '100%' : systemType === 'jbt' ? '60%' : '80%'
+                        width: systemType === 'ym' ? '100%' : (systemType === 'jbt' || systemType === 'tbg') ? '60%' : '80%'
                     }}
                 >
                     {

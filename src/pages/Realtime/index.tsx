@@ -144,7 +144,7 @@ const Realtime: React.FC = () => {
                   })}
                 </div>
                 {
-                  systemType === 'jbt' ?
+                  (systemType === 'jbt' || systemType === 'tbg') ?
                     <div className="back-img-type flex-box">
                       {
                         backImgType === 2 ?
@@ -182,7 +182,7 @@ const Realtime: React.FC = () => {
                 <span className="field">图片名称:&nbsp;{current1?.imageUrl?.split('track-inspect/')[1] || ''}</span>
               </div>
               {
-                systemType === 'jbt' ? null :
+                (systemType === 'jbt' || systemType === 'tbg') ? null :
                   (isObject(processResult) && !isEmpty(processResult) ?
                     <div className={`show-img-result`} onClick={() => setImgModalData(processResult)}>
                       预览结果

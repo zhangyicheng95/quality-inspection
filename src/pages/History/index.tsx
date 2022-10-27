@@ -221,7 +221,7 @@ const History = () => {
                     })}
                 </div>
                 {
-                    systemType === 'jbt' ?
+                    (systemType === 'jbt' || systemType === 'tbg') ?
                         <div className="back-img-type flex-box">
                             {
                                 backImgType === 2 ?

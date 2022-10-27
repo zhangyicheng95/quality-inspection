@@ -145,8 +145,8 @@ const DataStatistics = () => {
                 return obj;
             });
             setPieChartsData([{ name: '正常', value: 0 }, { name: '异常', value: 0 }])
-            setChartsData([[320, 120], [132, 302], [301, 101], [334, 134], [390, 90], [330, 230], [320, 210]]);
-            setChartsFooter([labelFormat('1'), labelFormat('2'), labelFormat('3'), 4, 5, 6, 7]);
+            // setChartsData([[320, 120], [132, 302], [301, 101], [334, 134], [390, 90], [330, 230], [320, 210]]);
+            // setChartsFooter([labelFormat('1'), labelFormat('2'), labelFormat('3'), 4, 5, 6, 7]);
         }
     }, [orderList, currentType, timeRange]);
 
