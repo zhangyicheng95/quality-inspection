@@ -1,8 +1,8 @@
 import './index.less'
 
-const PanelTitle: React.FC = ({children}) => {
+const PanelTitle: React.FC<any> = ({ children, ...rest }) => {
     return (
-        <div className="component-panel-title">
+        <div className="component-panel-title" {...rest}>
             <div className="bar left" />
             <div className="icon" />
             <div className="text">{children}</div>

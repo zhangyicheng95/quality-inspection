@@ -19,6 +19,11 @@
                 component: './DataStatistics',
             },
             {
+                path: '/setting',
+                name: '设置',
+                component: './Setting',
+            },
+            {
                 path: '*',
                 redirect: '/realtime',
             }

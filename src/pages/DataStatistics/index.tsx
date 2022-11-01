@@ -195,7 +195,7 @@ const DataStatistics = () => {
                                         图片维度
                                     </div>
                                     {
-                                        (systemType === 'jbt' || systemType === 'tbg') ?
+                                        systemType === 'jbt' ?
                                             <div
                                                 className={classNames("statistic-btn", { active: currentType === 'label' })}
                                                 onClick={() => {
