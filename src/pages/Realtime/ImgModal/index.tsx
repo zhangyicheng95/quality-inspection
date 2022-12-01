@@ -13,10 +13,10 @@ interface Props {
 
 const ImgModal: React.FC<Props> = (props) => {
     const {
-        materialList,
+        handleOrderDetail, materialList, currentOrderId
     } = useModel('history' as any);
     const { data = {}, onCancel, } = props;
-    const { globalSrcPath = '', boundingBoxes = [], } = data;
+    const { globalSrcPath = '', boundingBoxes = [], orderNo } = data;
     const [selectedUrl, setSelectedUrl] = useState(0);
     const [selectedNum, setSelectedNum] = useState(0);
     const [carType, setCarType] = useState(1);
@@ -49,7 +49,10 @@ const ImgModal: React.FC<Props> = (props) => {
                 {
                     (materialList || []).map((car: any, index: number) => {
                         const { id, cname } = car;
-                        return <Button key={id} type={carType === id ? "primary" : "default"} onClick={() => setCarType(id)}>
+                        return <Button key={id} type={carType === id ? "primary" : "default"} onClick={() => {
+                            handleOrderDetail(currentOrderId, id);
+                            setCarType(id);
+                        }}>
                             {cname}
                         </Button>
                     })

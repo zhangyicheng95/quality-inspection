@@ -11,6 +11,20 @@ import moment from 'moment'
 
 const { Option } = Select;
 const RangePicker: any = DatePicker.RangePicker;
+const LABEL_RESULT = {
+    1: "正常",
+    0: "未审核",
+    "-1": "异常",
+};
+const LABEL_PRE_RESULT = {
+    'B': "严重",
+    'C': "一般"
+};
+const CLASS_RESULT = {
+    1: "success",
+    0: "normal",
+    "-1": "danger",
+};
 
 const History = () => {
     const [form] = Form.useForm();
@@ -47,7 +61,6 @@ const History = () => {
 
     useEffect(() => {
         if (isObject(processResult) && !isEmpty(processResult)) {
-            loadMaterialList();
             setImgModalData(Object.assign({}, processResult))
         }
     }, [processResult]);
@@ -55,6 +68,18 @@ const History = () => {
     const columns = [
         { key: 'index', dataIndex: 'index', title: '序号', width: 50, align: 'center' },
         { key: 'orderNo', dataIndex: 'orderNo', title: '订单号' },
+        {
+            key: 'orderStatus', dataIndex: 'orderStatus', title: '订单状态', render: (result, record) => {
+                const { algorithmData } = record;
+                return (
+                    <span className={CLASS_RESULT[result]}>
+                        {result == '-1' ?
+                            LABEL_PRE_RESULT[algorithmData?.severity + ''] ? LABEL_PRE_RESULT[algorithmData?.severity + ''] : ''
+                            : ''}{LABEL_RESULT[result]}
+                    </span>
+                )
+            }
+        },
         {
             key: 'orderTime', dataIndex: 'orderTime', title: '订单时间', render: (text) => {
                 return moment(text).format('YYYY-MM-DD HH:mm:ss')
@@ -78,7 +103,7 @@ const History = () => {
                 return <div className="flex-box">
                     <Button
                         type="text"
-                        onClick={() => handleOrderDetail(orderNo)}
+                        onClick={() => loadMaterialList(orderNo)}
                     >
                         查看历史
                     </Button>

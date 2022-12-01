@@ -89,20 +89,89 @@ export default () => {
                 ...query,
             })
         )
-        if (res && res.code == 200) {
-            setOrderList(res.result)
-        } else {
-            message.error('接口异常')
+        if (res) {
+            setOrderList(res)
+        }
+    };
+    // 物料位置数据
+    const loadMaterialList = async (orderNo: string) => {
+        setCurrentOrderId(orderNo);
+        // const res = await getMaterialLocationList();
+        const res = [
+            {
+                "id": 1,
+                "imgUrl": "http://127.0.0.1/test.jpg",
+                "materialId": 1,
+                "var1": "",
+                "var2": "",
+                "var3": "",
+                "var4": "",
+                "var5": "",
+                "cname": "车身正面",
+                "ename": "Front"
+            },
+            {
+                "id": 2,
+                "imgUrl": "url",
+                "materialId": 1,
+                "var1": "",
+                "var2": "",
+                "var3": "",
+                "var4": "",
+                "var5": "",
+                "cname": "车身背面",
+                "ename": "Back"
+            },
+            {
+                "id": 3,
+                "imgUrl": "url",
+                "materialId": 1,
+                "var1": "",
+                "var2": "",
+                "var3": "",
+                "var4": "",
+                "var5": "",
+                "cname": "车身左侧",
+                "ename": "Left"
+            },
+            {
+                "id": 4,
+                "imgUrl": "url",
+                "materialId": 1,
+                "var1": "",
+                "var2": "",
+                "var3": "",
+                "var4": "",
+                "var5": "",
+                "cname": "车身右侧",
+                "ename": "Right"
+            },
+            {
+                "id": 5,
+                "imgUrl": "url",
+                "materialId": 1,
+                "var1": "",
+                "var2": "",
+                "var3": "",
+                "var4": "",
+                "var5": "",
+                "cname": "车身顶部",
+                "ename": "Top"
+            }
+        ];
+        if (res) {
+            setMaterialList(res);
+            handleOrderDetail(orderNo, !!res[0] ? res[0]?.id : '1')
         }
     };
     // 查看历史
-    const handleOrderDetail = async (orderNo: string) => {
+    const handleOrderDetail = async (orderNo: string, lable) => {
         if (orderNo) {
-            const res = await getOrderDetail(orderNo);
-            if (res && res.code == 200) {
-                setProcessResult(res.result);
+            const res = await getOrderDetail({ orderNo, lable });
+            if (res) {
+                setProcessResult(res);
             } else {
-                message.error('接口异常')
+                message.error(res?.message || '接口异常')
             }
         }
     };
@@ -126,19 +195,8 @@ export default () => {
             Object.assign(data, { isAudited });
         }
         const res = await queryImgList(data);
-        if (res && res.code == 200) {
-            setImgList(res.result);
-        } else {
-            message.error('接口异常')
-        }
-    };
-    // 物料位置数据
-    const loadMaterialList = async () => {
-        const res = await getMaterialLocationList();
-        if (res && res.code == 200) {
-            setMaterialList(res.result);
-        } else {
-            message.error('接口异常')
+        if (res) {
+            setImgList(res);
         }
     };
     // 切换图片
@@ -153,10 +211,8 @@ export default () => {
             Object.assign(data, { isAudited })
         }
         const res = await getSiblingImg(Object.assign({}, data,));
-        if (res && res.code == 200) {
-            setImgViewerData(res.result);
-        } else {
-            message.error('接口异常')
+        if (res) {
+            setImgViewerData(res);
         }
     };
     // 审核图片
@@ -166,10 +222,8 @@ export default () => {
             audit,
             id: imgViewerData.imageId,
         });
-        if (res && res.code == 200) {
-            setImgViewerData(res.result);
-        } else {
-            message.error('接口异常')
+        if (res) {
+            setImgViewerData(res);
         }
         setImgViewerLoading(false)
     }

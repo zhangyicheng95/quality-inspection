@@ -84,10 +84,8 @@ export default () => {
                     ...rest,
                 })
             ).then((res) => {
-                if (res && res.code == 200) {
+                if (res) {
                     setOrderList(res);
-                } else {
-                    message.error(res?.message || '接口异常');
                 }
             });
         } else if (currentType === 'img') {
@@ -96,10 +94,8 @@ export default () => {
                     ...rest,
                 })
             ).then((res) => {
-                if (res && res.code == 200) {
+                if (res) {
                     setOrderList(res);
-                } else {
-                    message.error(res?.message || '接口异常');
                 }
             });
         } else if (currentType === 'label') {
@@ -108,10 +104,8 @@ export default () => {
                     ...rest,
                 })
             ).then((res) => {
-                if (res && res.code == 200) {
+                if (res) {
                     setOrderList(res);
-                } else {
-                    message.error(res?.message || '接口异常');
                 }
             });
         }
@@ -140,10 +134,8 @@ export default () => {
             Object.assign(data, { isAudited });
         }
         const res = await queryImgList(data);
-        if (res && res.code == 200) {
+        if (res) {
             res && setImgList(res);
-        } else {
-            message.error('接口异常')
         }
     }
     // 切换图片
@@ -158,10 +150,8 @@ export default () => {
             Object.assign(data, { isAudited })
         }
         const res = await getSiblingImg(data)
-        if (res && res.code == 200) {
+        if (res) {
             setImgViewerData(res);
-        } else {
-            message.error('接口异常')
         }
     }
     // 审核图片
@@ -171,10 +161,8 @@ export default () => {
             audit,
             id: imgViewerData.id,
         });
-        if (res && res.code == 200) {
+        if (res) {
             setImgViewerData(res)
-        } else {
-            message.error('接口异常')
         }
         setImgViewerLoading(false)
     }
