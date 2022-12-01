@@ -1,14 +1,16 @@
-import { queryOrderList, getOrderDetail, queryImgList, getSiblingImg, auditImg } from "@/services";
+import { queryOrderList, getOrderDetail, queryImgList, getSiblingImg, auditImg, getMaterialLocationList } from "@/services";
 import { useEffect, useState } from 'react';
-const moment = require("moment");
+import { message } from 'antd';
+import moment from "moment";
+
 const getInitialList = () => ({
-    page: 1,
-    totalRecord: 0,
-    size: 20,
-    contents: [],
+    pageNum: 1,
+    total: 0,
+    pageSize: 20,
+    list: [],
 });
 const getInitialOrderQuery = () => ({
-    orderId: undefined,
+    orderNo: undefined,
     timeRange: [],
 });
 const getInitialImgQuery = () => ({
@@ -19,23 +21,21 @@ const getInitialImgQuery = () => ({
 });
 const formatQuery = (query) => {
     const { timeRange = [], qualified, ...rest } = query;
-    const startTime =
+    const orderBeginTime =
         timeRange[0] && moment(timeRange[0]).format("YYYY-MM-DD HH:mm:ss");
-    const endTime =
+    const orderEndTime =
         timeRange[1] && moment(timeRange[1]).format("YYYY-MM-DD HH:mm:ss");
     let res = {
         ...rest,
-        startTime,
-        endTime,
+        orderBeginTime,
+        orderEndTime,
     };
     qualified && Object.assign(res, {
-        qualified: qualified === 1
+        orderStatus: qualified
     })
     return res
 };
 let preventNextQuery = false;
-// @ts-ignore
-const systemType = window?.QUALITY_CONFIG?.type;
 
 export default () => {
     const [ready, setReady] = useState<boolean>(false)
@@ -47,9 +47,10 @@ export default () => {
     const [imgQuery, setImgQuery] = useState<any>(getInitialImgQuery())
     const [imgList, setImgList] = useState<any>(getInitialList())
     const [processResult, setProcessResult] = useState<any>({});
-    const [imgViewerLoading, setImgViewerLoading] = useState<boolean>(false)
-    const [imgViewerData, setImgViewerData] = useState<any>({})
-    const [imgViewerVisible, setImgViewerVisible] = useState<boolean>(false)
+    const [imgViewerLoading, setImgViewerLoading] = useState<boolean>(false);
+    const [imgViewerData, setImgViewerData] = useState<any>({});
+    const [imgViewerVisible, setImgViewerVisible] = useState<boolean>(false);
+    const [materialList, setMaterialList] = useState<any>([]);
 
     const resetOrderQuery = () => setOrderQuery(getInitialOrderQuery())
     const resetImgQuery = () => setImgQuery(getInitialImgQuery())
@@ -59,100 +60,125 @@ export default () => {
         setCurrentOrderId(undefined)
         setImgDrawerVisible(false)
     }
-    const patchImg = (id, isAudited) => setImgList({
+    const patchImg = (imageId, isAudited) => setImgList({
         ...imgList,
-        contents: imgList.contents.map(i => i.id === id ? { ...i, isAudited } : i)
+        list: imgList.list.map(i => i.imageId === imageId ? { ...i, isAudited } : i)
     })
     const unmount = () => {
         setReady(false)
         resetImgDrawer()
         resetOrderQuery()
         setOrderList(getInitialList())
-    }
+    };
+
+    // 列表
     const loadOrderList = async (query = {} as any) => {
         if (preventNextQuery) {
             preventNextQuery = false
             return
         }
-        if (query.size) {
+        if (query.pageSize) {
             preventNextQuery = true
         }
-        const { page, size } = orderList
+        const { pageNum, pageSize } = orderList
         const res = await queryOrderList(
             formatQuery({
                 ...orderQuery,
-                page,
-                size,
+                pageNum,
+                pageSize,
                 ...query,
-                type: systemType === 'xd' ? 2 : 1
             })
         )
-        if (res) {
-            setOrderList(res)
+        if (res && res.code == 200) {
+            setOrderList(res.result)
+        } else {
+            message.error('接口异常')
         }
     };
-    const handleOrderDetail = async (orderId: string) => {
-        if (orderId) {
-            const res = await getOrderDetail(orderId);
-            console.log(res)
-            res && setProcessResult(res);
+    // 查看历史
+    const handleOrderDetail = async (orderNo: string) => {
+        if (orderNo) {
+            const res = await getOrderDetail(orderNo);
+            if (res && res.code == 200) {
+                setProcessResult(res.result);
+            } else {
+                message.error('接口异常')
+            }
         }
-    }
+    };
     const handleViewOrder = (order) => {
-        setCurrentOrderId(order.orderId)
+        setCurrentOrderId(order.orderNo)
         setImgDrawerVisible(true)
         // loadImgList()
-    }
+    };
+    // 图片列表
     const loadImgList = async (query = {} as any) => {
-        const { page, size } = imgList
+        const { pageNum, pageSize } = imgList
         const { isAudited, ...rest } = formatQuery({
             ...imgQuery,
-            orderId: currentOrderId,
-            page,
-            size,
+            orderNo: currentOrderId,
+            pageNum,
+            pageSize,
             ...query,
-            type: systemType === 'xd' ? 2 : 1
         })
         let data = { ...rest }
         if (isAudited !== 3) {
             Object.assign(data, { isAudited });
         }
         const res = await queryImgList(data);
-        // console.log(res)
-        res && setImgList(res)
-    }
+        if (res && res.code == 200) {
+            setImgList(res.result);
+        } else {
+            message.error('接口异常')
+        }
+    };
+    // 物料位置数据
+    const loadMaterialList = async () => {
+        const res = await getMaterialLocationList();
+        if (res && res.code == 200) {
+            setMaterialList(res.result);
+        } else {
+            message.error('接口异常')
+        }
+    };
+    // 切换图片
     const loadSiblingImg = async (query = {}) => {
         const { isAudited, ...rest } = formatQuery({
             ...imgQuery,
-            orderId: currentOrderId,
+            orderNo: currentOrderId,
             ...query,
         })
         let data = { ...rest }
         if (isAudited !== 3) {
             Object.assign(data, { isAudited })
         }
-        const res = await getSiblingImg(Object.assign({}, data, {
-            type: systemType === 'xd' ? 2 : 1
-        }))
-        // console.log(res)
-        res && setImgViewerData(res)
-    }
+        const res = await getSiblingImg(Object.assign({}, data,));
+        if (res && res.code == 200) {
+            setImgViewerData(res.result);
+        } else {
+            message.error('接口异常')
+        }
+    };
+    // 审核图片
     const handleAudit = async (audit) => {
-        setImgViewerLoading(true)
+        setImgViewerLoading(true);
         const res = await auditImg({
             audit,
-            id: imgViewerData.id,
+            id: imgViewerData.imageId,
         });
-        // console.log(res)
-        res && setImgViewerData(res)
+        if (res && res.code == 200) {
+            setImgViewerData(res.result);
+        } else {
+            message.error('接口异常')
+        }
         setImgViewerLoading(false)
     }
 
     useEffect(() => {
-        ready && loadOrderList({ page: 1 })
+        ready && loadOrderList({ pageNum: 1 })
     }, [ready, orderQuery])
     useEffect(() => {
-        ready && imgDrawerVisible && loadImgList({ page: 1, orderId: currentOrderId, })
+        ready && imgDrawerVisible && loadImgList({ pageNum: 1, orderNo: currentOrderId, })
     }, [ready, imgDrawerVisible, imgQuery, currentOrderId])
 
     return {
@@ -169,5 +195,6 @@ export default () => {
         imgViewerVisible, imgViewerData, imgViewerLoading,
         setImgViewerVisible, setImgViewerData, setImgViewerLoading,
         handleOrderDetail, processResult, setProcessResult,
+        loadMaterialList, materialList,
     }
 };

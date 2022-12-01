@@ -37,45 +37,47 @@ const auditOptions = [
 
 const ImgDrawer: React.FC = () => {
     const {
-        currentOrderId, imgQuery, setImgQuery, imgList, loadImgList,
+        currentOrderId, imgQuery, setImgQuery, imgList,
+        loadImgList,
         imgDrawerVisible, setImgDrawerVisible, resetImgDrawer,
         imgViewerVisible, setImgViewerVisible, imgViewerData, setImgViewerData,
         handleAudit, loadSiblingImg
-    } = useModel('history' as any)
-    const [form] = Form.useForm()
-    const { height } = useResize()
-    const [curHeight, setCurHeight] = useState<number>(height)
+    } = useModel('history' as any);
+
+    const [form] = Form.useForm();
+    const { height } = useResize();
+    const [curHeight, setCurHeight] = useState<number>(height);
     useEffect(() => {
         setCurHeight(Math.max(height, 700))
-    }, [height])
+    }, [height]);
 
     useEffect(() => {
         if (imgViewerVisible) {
             form.setFieldsValue(imgQuery)
         }
         form.setFieldsValue(imgQuery)
-    }, [imgViewerVisible, form, imgQuery])
+    }, [imgViewerVisible, form, imgQuery]);
 
     const handleViewImg = record => () => {
         setImgViewerData(record)
         setImgViewerVisible(true)
     }
 
-    const handleGetSiblingImg = (direction, id) => () => loadSiblingImg({
+    const handleGetSiblingImg = (direction, imageId) => () => loadSiblingImg({
         direction,
-        currentImgId: id
+        currentImgId: imageId
     })
 
     const columns = [
         { key: 'index', dataIndex: 'index', title: '序号', width: 50, align: 'center' },
-        { key: 'orderId', dataIndex: 'orderId', title: '订单号' },
-        { key: 'id', dataIndex: 'id', title: '图片序号', width: 80 },
+        { key: 'imageId', dataIndex: 'imageId', title: '图片序号', width: 80 },
+        { key: 'materialLocationName', dataIndex: 'materialLocationName', title: '告警位置', width: 100 },
         {
-            key: 'time', dataIndex: 'time', title: '图片时间',
-            render: time => format(time)
+            key: 'captureTime', dataIndex: 'captureTime', title: '图片时间',
+            render: text => format(text)
         },
         {
-            key: 'result', dataIndex: 'result', title: '检测结果', width: 80,
+            key: 'algStatus', dataIndex: 'algStatus', title: '检测结果', width: 80,
             render: (result, record) => {
                 const { algorithmData } = record;
                 return (
@@ -88,7 +90,7 @@ const ImgDrawer: React.FC = () => {
             }
         },
         {
-            key: 'audit', dataIndex: 'audit', title: '人工判断', width: 80,
+            key: 'auditStatus', dataIndex: 'auditStatus', title: '人工判断', width: 80,
             render: result => (
                 <span className={CLASS_RESULT[result]}>
                     {LABEL_RESULT[result] || '--'}
@@ -175,17 +177,17 @@ const ImgDrawer: React.FC = () => {
                 className="page-history-img-list"
                 columns={columns as any}
                 rowKey="id"
-                dataSource={imgList.contents.map((i, index) => ({
+                dataSource={imgList.list.map((i, index) => ({
                     ...i,
                     index: index + 1
                 }))}
                 pagination={{
-                    total: imgList.totalRecord,
-                    current: imgList.page,
-                    pageSize: imgList.size,
+                    total: imgList.total,
+                    current: imgList.pageNum,
+                    pageSize: imgList.pageSize,
                     size: 'small',
                     showSizeChanger: false,
-                    onChange: (page, size) => loadImgList({ page, size })
+                    onChange: (pageNum, pageSize) => loadImgList({ pageNum, pageSize })
                 }}
                 scroll={{ y: curHeight - 290 }}
             />
@@ -197,8 +199,8 @@ const ImgDrawer: React.FC = () => {
                     loadImgList()
                 }}
                 onAudit={handleAudit}
-                onPrev={handleGetSiblingImg(-1, imgViewerData.id)}
-                onNext={handleGetSiblingImg(1, imgViewerData.id)}
+                onPrev={handleGetSiblingImg(-1, imgViewerData.imageId)}
+                onNext={handleGetSiblingImg(1, imgViewerData.imageId)}
             />}
         </Drawer>
     )

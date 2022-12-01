@@ -10,7 +10,7 @@ export default () => {
     const [result, setResult] = useState<any[]>([]);
     const [processResult, setProcessResult] = useState<any>({});
     const [processResultTimes, setProcessResultTimes] = useState(0);
-    const [page, setPage] = useState<number>(1);
+    const [pageNum, setPage] = useState<number>(1);
     const [ws, setWs] = useState<any>();
     const [inited, setInited] = useState<boolean>(false);
     const init = async () => {
@@ -57,35 +57,35 @@ export default () => {
                     setOrderCount(orderCount);
                     setExceptionOrderCount(exceptionOrderCount);
                     if (!inited) {
-                        setInited(true)
-                        setResult(imgList)
-                        setPage(1)
+                        setInited(true);
+                        setResult(imgList);
+                        setPage(1);
                     } else {
                         setResult([...imgList, ...result].slice(
                             0,
                             REALTIME_LIST_STACK_MAX
-                        ))
+                        ));
                     }
                 }
             }
             ws.onerror = () => {
-                setInited(false)
+                setInited(false);
                 init();
             }
             ws.onclose = () => {
                 console.error("ws:disconnected!");
                 window['ws'] = undefined;
-                setInited(false)
+                setInited(false);
             };
         }
-    }, [result, ws, inited])
+    }, [result, ws, inited]);
 
     return {
         orderCount, setOrderCount,
         exceptionOrderCount, setExceptionOrderCount,
         result, setResult,
         processResult, processResultTimes, setProcessResultTimes,
-        page, setPage,
+        pageNum, setPage,
         init, removeInit
     }
 }

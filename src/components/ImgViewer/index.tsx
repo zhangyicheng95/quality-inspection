@@ -44,7 +44,7 @@ const getInitialTransform = () => ({
     enableTransition: false,
 })
 
-interface IProps{
+interface IProps {
     data: any;
     onClose?: () => void;
     onPrev?: () => void;
@@ -52,7 +52,7 @@ interface IProps{
     onAudit?: (direction: number) => void;
 }
 
-const ImgViewer: React.FC<IProps> = ({data, onClose, onPrev, onNext, onAudit}) => {
+const ImgViewer: React.FC<IProps> = ({ data, onClose, onPrev, onNext, onAudit }) => {
     const [loading, setLoading] = useState<boolean>(false)
     const [transform, setTransform] = useState<any>(getInitialTransform())
     const [mode, setMode] = useState<any>(Mode.CONTAIN)
@@ -120,23 +120,23 @@ const ImgViewer: React.FC<IProps> = ({data, onClose, onPrev, onNext, onAudit}) =
             case 27:
                 // onClose()
                 break
-                // SPACE
+            // SPACE
             case 32:
                 toggleMode()
                 break
-                // LEFT_ARROW
+            // LEFT_ARROW
             case 37:
                 prev()
                 break
-                // UP_ARROW
+            // UP_ARROW
             case 38:
                 handleActions("zoomIn")
                 break
-                // RIGHT_ARROW
+            // RIGHT_ARROW
             case 39:
                 next()
                 break
-                // DOWN_ARROW
+            // DOWN_ARROW
             case 40:
                 handleActions("zoomOut")
                 break
@@ -209,7 +209,7 @@ const ImgViewer: React.FC<IProps> = ({data, onClose, onPrev, onNext, onAudit}) =
         setImgStyle(style)
     }, [transform, mode])
     return (
-        <div className="img-viewer__wrapper" style={{zIndex}}>
+        <div className="img-viewer__wrapper" style={{ zIndex }}>
             <div className="img-viewer__mask">
                 <SmallDashOutlined />
             </div>
@@ -230,23 +230,23 @@ const ImgViewer: React.FC<IProps> = ({data, onClose, onPrev, onNext, onAudit}) =
             </span>}
             <div className="img-viewer__actions">
                 <div className="img-viewer__actions__inner">
-                    <ZoomOutOutlined onClick={() => handleActions('zoomOut')}/>
-                    <ZoomInOutlined onClick={() => handleActions('zoomIn')}/>
-                    <Divider type="vertical"/>
+                    <ZoomOutOutlined onClick={() => handleActions('zoomOut')} />
+                    <ZoomInOutlined onClick={() => handleActions('zoomIn')} />
+                    <Divider type="vertical" />
                     {mode.icon === 'full-screen'
-                        ? <FullscreenOutlined onClick={toggleMode}/>
-                        : <FullscreenExitOutlined onClick={toggleMode}/>
+                        ? <FullscreenOutlined onClick={toggleMode} />
+                        : <FullscreenExitOutlined onClick={toggleMode} />
                     }
-                    <Divider type="vertical"/>
-                    <UndoOutlined onClick={() => handleActions('anticlocelise')}/>
-                    <RedoOutlined onClick={() => handleActions('clocelise')}/>
+                    <Divider type="vertical" />
+                    <UndoOutlined onClick={() => handleActions('anticlocelise')} />
+                    <RedoOutlined onClick={() => handleActions('clocelise')} />
                 </div>
             </div>
 
             <div className="img-viewer__canvas">
-                {data.imageUrl && <img
+                {(data.imageUrl || data.imgUrl) && <img
                     className="img-viewer__img"
-                    src={data.imageUrl}
+                    src={data.imageUrl || data.imgUrl}
                     style={imgStyle}
                     onLoad={handleImgLoad}
                     onError={handleImgError}
@@ -257,7 +257,7 @@ const ImgViewer: React.FC<IProps> = ({data, onClose, onPrev, onNext, onAudit}) =
             <div className="img-viewer__info">
                 <div className="field">
                     <div className="title">订单号</div>
-                    <div className="value">{data.orderId}</div>
+                    <div className="value">{data.orderNo}</div>
                 </div>
                 <div className="field">
                     <div className="title">图片序号</div>

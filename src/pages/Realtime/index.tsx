@@ -36,8 +36,6 @@ const Realtime: React.FC = () => {
   const [imgViewerVisible, setImgViewerVisible] = useState<boolean>(false);
   const [imgModalData, setImgModalData] = useState<any>({});
   const [backImgType, setBackImgType] = useState(2);
-  // @ts-ignore
-  const systemType = window?.QUALITY_CONFIG?.type;
 
   useEffect(() => {
     init();
@@ -64,8 +62,8 @@ const Realtime: React.FC = () => {
     setCurHeight(Math.max(height, 700))
   }, [height]);
 
-  const viewOrder = orderId => () => history.push(`/history?orderId=${orderId}`)
-  const viewImg = (orderId, id) => () => history.push(`/history?orderId=${orderId}&id=${id}`)
+  const viewOrder = orderNo => () => history.push(`/history?orderNo=${orderNo}`)
+  const viewImg = (orderNo, id) => () => history.push(`/history?orderNo=${orderNo}&id=${id}`)
   const handleViewImg = record => () => {
     setImgViewerData(record)
     setImgViewerVisible(true)
@@ -74,12 +72,12 @@ const Realtime: React.FC = () => {
   const columns = [
     { key: 'index', dataIndex: 'index', title: '序号', width: 50, align: 'center' },
     {
-      key: 'orderId', dataIndex: 'orderId', title: '订单号',
-      render: (orderId) => <Button type="text" onClick={viewOrder(orderId)}>{orderId}</Button>
+      key: 'orderNo', dataIndex: 'orderNo', title: '订单号',
+      render: (orderNo) => <Button type="text" onClick={viewOrder(orderNo)}>{orderNo}</Button>
     },
     {
       key: 'id', dataIndex: 'id', title: '图片序号', width: 75,
-      render: (id, { orderId }) => <Button type="text" onClick={viewImg(orderId, id)}>{id}</Button>
+      render: (id, { orderNo }) => <Button type="text" onClick={viewImg(orderNo, id)}>{id}</Button>
     },
     {
       key: 'time', dataIndex: 'time', title: '图片时间', width: 150,
@@ -117,11 +115,11 @@ const Realtime: React.FC = () => {
         <PanelTitle>实时结果</PanelTitle>
         <div className="panel-content">
           {
-            (systemType === 'jbt' || systemType === 'tbg') && isObject(processResult) && !isEmpty(processResult) ?
+            isObject(processResult) && !isEmpty(processResult) ?
               <Fragment>
-                <div className={`img ${systemType}`} />
+                <div className={`img xd`} />
                 <div className="jbt-box">
-                  {(systemType === 'jbt' ? jbtLines : tbgLines).map((item: any, index: number) => {
+                  {tbgLines.map((item: any, index: number) => {
                     const { label, x1, y1, x2, y2, radio } = item;
                     return <div
                       key={index}
@@ -143,24 +141,20 @@ const Realtime: React.FC = () => {
                     />
                   })}
                 </div>
-                {
-                  (systemType === 'jbt' || systemType === 'tbg') ?
-                    <div className="back-img-type flex-box">
-                      {
-                        backImgType === 2 ?
-                          <Button style={{ marginRight: 8 }} type="primary" >2D</Button>
-                          :
-                          <Button style={{ marginRight: 8 }} onClick={() => setBackImgType(2)}>2D</Button>
-                      }
-                      {
-                        backImgType === 3 ?
-                          <Button style={{ marginRight: 8 }} type="primary" >3D</Button>
-                          :
-                          <Button style={{ marginRight: 8 }} onClick={() => setBackImgType(3)}>3D</Button>
-                      }
-                    </div>
-                    : null
-                }
+                <div className="back-img-type flex-box">
+                  {
+                    backImgType === 2 ?
+                      <Button style={{ marginRight: 8 }} type="primary" >2D</Button>
+                      :
+                      <Button style={{ marginRight: 8 }} onClick={() => setBackImgType(2)}>2D</Button>
+                  }
+                  {
+                    backImgType === 3 ?
+                      <Button style={{ marginRight: 8 }} type="primary" >3D</Button>
+                      :
+                      <Button style={{ marginRight: 8 }} onClick={() => setBackImgType(3)}>3D</Button>
+                  }
+                </div>
               </Fragment>
               :
               (current1.imageUrl && <div
@@ -177,17 +171,16 @@ const Realtime: React.FC = () => {
             <Fragment>
               <div className="current-img-info">
                 <span className="field" style={{ marginRight: 20 }}>{format(current1.time)}</span>
-                <span className="field">订单号:&nbsp;{current1.orderId || ''}</span>
+                <span className="field">订单号:&nbsp;{current1.orderNo || ''}</span>
                 <span className="field">图片序号:&nbsp;{current1.id || ''}</span>
                 <span className="field">图片名称:&nbsp;{current1?.imageUrl?.split('track-inspect/')[1] || ''}</span>
               </div>
               {
-                (systemType === 'jbt' || systemType === 'tbg') ? null :
-                  (isObject(processResult) && !isEmpty(processResult) ?
-                    <div className={`show-img-result`} onClick={() => setImgModalData(processResult)}>
-                      预览结果
-                    </div>
-                    : null)
+                isObject(processResult) && !isEmpty(processResult) ?
+                  <div className={`show-img-result`} onClick={() => setImgModalData(processResult)}>
+                    预览结果
+                  </div>
+                  : null
               }
               <div className={`current-img-result ${current1.result > 0 ? '' : 'error'}`}>
                 {LABEL_RESULT[current1.result]}

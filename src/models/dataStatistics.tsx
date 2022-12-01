@@ -4,10 +4,10 @@ import { message } from 'antd';
 
 const moment = require("moment");
 const getInitialList = () => ({
-    page: 1,
-    totalRecord: 0,
-    size: 20,
-    contents: [],
+    pageNum: 1,
+    total: 0,
+    pageSize: 20,
+    list: [],
 });
 const getInitialOrderQuery = (currentType = 'order') => ({
     currentType,
@@ -16,7 +16,7 @@ const getInitialOrderQuery = (currentType = 'order') => ({
 const getInitialImgQuery = () => ({
     id: undefined,
     timeRange: [],
-    qualified: -1,
+    qualified: 0,
     isAudited: 3,
 });
 const formatQuery = (query) => {
@@ -63,7 +63,7 @@ export default () => {
     }
     const patchImg = (id, isAudited) => setImgList({
         ...imgList,
-        contents: imgList.contents.map(i => i.id === id ? { ...i, isAudited } : i)
+        list: imgList.list.map(i => i.id === id ? { ...i, isAudited } : i)
     })
     const unmount = (currentType: string) => {
         setReady(false)
@@ -71,6 +71,7 @@ export default () => {
         resetOrderQuery(currentType)
         setOrderList({})
     }
+    // 图表数据
     const loadOrderList = () => {
         if (preventNextQuery) {
             preventNextQuery = false
@@ -83,8 +84,7 @@ export default () => {
                     ...rest,
                 })
             ).then((res) => {
-                console.log('res', res);
-                if (res) {
+                if (res && res.code == 200) {
                     setOrderList(res);
                 } else {
                     message.error(res?.message || '接口异常');
@@ -96,8 +96,7 @@ export default () => {
                     ...rest,
                 })
             ).then((res) => {
-                console.log('res', res);
-                if (res) {
+                if (res && res.code == 200) {
                     setOrderList(res);
                 } else {
                     message.error(res?.message || '接口异常');
@@ -109,8 +108,7 @@ export default () => {
                     ...rest,
                 })
             ).then((res) => {
-                console.log('res', res);
-                if (res) {
+                if (res && res.code == 200) {
                     setOrderList(res);
                 } else {
                     message.error(res?.message || '接口异常');
@@ -118,21 +116,23 @@ export default () => {
             });
         }
     }
+    // 点击柱状图
     const handleViewOrder = (order) => {
-        if (order?.orderId && order?.orderId[0]) {
-            setCurrentOrderIdList(order?.orderId || [])
-            setCurrentOrderId(order?.orderId[0])
+        if (order?.orderNo && order?.orderNo[0]) {
+            setCurrentOrderIdList(order?.orderNo || [])
+            setCurrentOrderId(order?.orderNo[0])
         }
         setImgDrawerVisible(true)
         // loadImgList()
     }
+    // 弹出抽屉，列表
     const loadImgList = async (query = {} as any) => {
-        const { page, size } = imgList
+        const { pageNum, pageSize } = imgList
         const { isAudited, ...rest } = formatQuery({
             ...imgQuery,
-            // orderId: currentOrderId,
-            page,
-            size,
+            // orderNo: currentOrderId,
+            pageNum,
+            pageSize,
             ...query,
         })
         let data = { ...rest }
@@ -140,13 +140,17 @@ export default () => {
             Object.assign(data, { isAudited });
         }
         const res = await queryImgList(data);
-        // console.log(res)
-        res && setImgList(res)
+        if (res && res.code == 200) {
+            res && setImgList(res);
+        } else {
+            message.error('接口异常')
+        }
     }
+    // 切换图片
     const loadSiblingImg = async (query = {}) => {
         const { isAudited, ...rest } = formatQuery({
             ...imgQuery,
-            orderId: currentOrderId,
+            orderNo: currentOrderId,
             ...query,
         })
         let data = { ...rest }
@@ -154,29 +158,37 @@ export default () => {
             Object.assign(data, { isAudited })
         }
         const res = await getSiblingImg(data)
-        // console.log(res)
-        res && setImgViewerData(res)
+        if (res && res.code == 200) {
+            setImgViewerData(res);
+        } else {
+            message.error('接口异常')
+        }
     }
+    // 审核图片
     const handleAudit = async (audit) => {
         setImgViewerLoading(true)
         const res = await auditImg({
             audit,
             id: imgViewerData.id,
         });
-        // console.log(res)
-        res && setImgViewerData(res)
+        if (res && res.code == 200) {
+            setImgViewerData(res)
+        } else {
+            message.error('接口异常')
+        }
         setImgViewerLoading(false)
     }
 
     useEffect(() => {
         ready && loadOrderList();
-    }, [ready, orderQuery])
+    }, [ready, orderQuery]);
+
     useEffect(() => {
         imgDrawerVisible && loadImgList({
-            page: 1,
-            //  orderId: currentOrderId, 
+            pageNum: 1,
+            //  orderNo: currentOrderId, 
         })
-    }, [ready, imgDrawerVisible, imgQuery, currentOrderId])
+    }, [ready, imgDrawerVisible, imgQuery, currentOrderId]);
 
     return {
         ready, setReady,

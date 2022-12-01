@@ -62,7 +62,7 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
     }, [form, imgQuery])
 
     const handleViewImg = record => () => {
-        setCurrentOrderId(record.orderId);
+        setCurrentOrderId(record.orderNo);
         setImgViewerData(record);
         setImgViewerVisible(true);
     }
@@ -74,7 +74,7 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
 
     const columns = [
         { key: 'index', dataIndex: 'index', title: '序号', width: 50, align: 'center' },
-        { key: 'orderId', dataIndex: 'orderId', title: '订单号' },
+        { key: 'orderNo', dataIndex: 'orderNo', title: '订单号' },
         { key: 'id', dataIndex: 'id', title: '图片序号', width: 80 },
         {
             key: 'time', dataIndex: 'time', title: '图片时间',
@@ -194,17 +194,17 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
                 className="page-history-img-list"
                 columns={columns as any}
                 rowKey="id"
-                dataSource={(imgList?.contents || []).map((i, index) => ({
+                dataSource={(imgList?.list || []).map((i, index) => ({
                     ...i,
                     index: index + 1
                 }))}
                 pagination={{
-                    total: imgList.totalRecord,
-                    current: imgList.page,
-                    pageSize: imgList.size,
+                    total: imgList.total,
+                    current: imgList.pageNum,
+                    pageSize: imgList.pageSize,
                     size: 'small',
                     showSizeChanger: false,
-                    onChange: (page, size) => loadImgList({ page, size })
+                    onChange: (pageNum, pageSize) => loadImgList({ pageNum, pageSize })
                 }}
                 scroll={{ y: curHeight - 290 }}
             />

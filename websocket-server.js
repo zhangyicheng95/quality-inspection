@@ -11,7 +11,7 @@ const genData = () => ({
     imgList: [
         {
             id: `${Math.random()}`.slice(2),
-            orderId: `${Math.random()}`.slice(2),
+            orderNo: `${Math.random()}`.slice(2),
             imageUrl,
             id: n++,
             time: "2021-05-16 23:58:00",

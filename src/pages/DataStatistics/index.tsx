@@ -11,8 +11,6 @@ import moment from 'moment';
 import PieCharts from './PieCharts';
 
 const RangePicker: any = DatePicker.RangePicker;
-// @ts-ignore
-const systemType = window?.QUALITY_CONFIG?.type;
 // 搅拌桶名称对应关系
 const labelFormat = (type: string) => {
     switch (type) {
@@ -194,19 +192,15 @@ const DataStatistics = () => {
                                     >
                                         图片维度
                                     </div>
-                                    {
-                                        systemType === 'jbt' ?
-                                            <div
-                                                className={classNames("statistic-btn", { active: currentType === 'label' })}
-                                                onClick={() => {
-                                                    setCurrentType('label');
-                                                    onCancel();
-                                                }}
-                                            >
-                                                焊缝维度
-                                            </div>
-                                            : null
-                                    }
+                                    <div
+                                        className={classNames("statistic-btn", { active: currentType === 'label' })}
+                                        onClick={() => {
+                                            setCurrentType('label');
+                                            onCancel();
+                                        }}
+                                    >
+                                        焊缝维度
+                                    </div>
                                 </Col>
                                 <Col span={7} offset={2}>
                                     <Form.Item label="发生时间" name="timeRange" >
@@ -244,16 +238,16 @@ const DataStatistics = () => {
                                 const { name, seriesId, dataIndex } = e;
                                 setImgQuery((pre: any) => {
                                     return Object.assign({}, pre, {
-                                        qualified: seriesId === 'normal' ? 1 : -1
+                                        qualified: seriesId === 'normal' ? 1 : seriesId === 'abNormal' ? -1 : 0
                                     }, prev === 'label' ? {} : {
                                         timeRange: [moment(new Date(name).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(name).getTime() + 16 * 60 * 60 * 1000 - 1000)],
                                     })
                                 })
                                 if (prev === 'order') {
                                     const data = chartsData[dataIndex][seriesId];
-                                    handleViewOrder({ orderId: data });
+                                    handleViewOrder({ orderNo: data });
                                 } else {
-                                    handleViewOrder({ orderId: '' });
+                                    handleViewOrder({ orderNo: '' });
                                 }
 
                                 return prev;
