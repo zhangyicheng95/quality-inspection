@@ -78,10 +78,8 @@ const DataStatistics = () => {
     }, [currentType]);
 
     useEffect(() => {
-        console.log('orderList', orderList)
         const startTime = new Date(moment(timeRange[0]).format('YYYY-MM-DD')).getTime();
         const endTime = new Date(moment(timeRange[1]).format('YYYY-MM-DD')).getTime();
-        console.log((endTime - startTime) / 1000 / 60 / 60 / 24)
         if (_.isObject(orderList) && !_.isEmpty(orderList)) {
             if (currentType === 'label') {
                 const result = Object.entries(orderList).map((item: any) => {
@@ -192,7 +190,7 @@ const DataStatistics = () => {
                                     >
                                         图片维度
                                     </div>
-                                    <div
+                                    {/* <div
                                         className={classNames("statistic-btn", { active: currentType === 'label' })}
                                         onClick={() => {
                                             setCurrentType('label');
@@ -200,7 +198,7 @@ const DataStatistics = () => {
                                         }}
                                     >
                                         焊缝维度
-                                    </div>
+                                    </div> */}
                                 </Col>
                                 <Col span={7} offset={2}>
                                     <Form.Item label="发生时间" name="timeRange" >

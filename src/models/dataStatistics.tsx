@@ -25,13 +25,25 @@ const formatQuery = (query) => {
         !!timeRange && timeRange[0] ? moment(timeRange[0]).format("YYYY-MM-DD HH:mm:ss") : undefined;
     const endTime =
         !!timeRange && timeRange[1] ? moment(timeRange[1]).format("YYYY-MM-DD HH:mm:ss") : undefined;
+    const orderBeginTime =
+        timeRange[0] && moment(timeRange[0]).format("YYYY-MM-DD HH:mm:ss");
+    const orderEndTime =
+        timeRange[1] && moment(timeRange[1]).format("YYYY-MM-DD HH:mm:ss");
+    const captureBeginTime =
+        timeRange[0] && moment(timeRange[0]).format("YYYY-MM-DD HH:mm:ss");
+    const captureEndTime =
+        timeRange[1] && moment(timeRange[1]).format("YYYY-MM-DD HH:mm:ss");
     let res = {
         ...rest,
         startTime,
         endTime,
+        orderBeginTime,
+        orderEndTime,
+        captureBeginTime,
+        captureEndTime
     };
     qualified && Object.assign(res, {
-        qualified: qualified === 1
+        orderStatus: qualified
     })
     return res
 };
@@ -158,8 +170,8 @@ export default () => {
     const handleAudit = async (audit) => {
         setImgViewerLoading(true)
         const res = await auditImg({
-            audit,
-            id: imgViewerData.id,
+            auditStatus: audit,
+            id: imgViewerData.imageId,
         });
         if (res) {
             setImgViewerData(res)

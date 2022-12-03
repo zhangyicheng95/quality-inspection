@@ -25,17 +25,22 @@ const formatQuery = (query) => {
         timeRange[0] && moment(timeRange[0]).format("YYYY-MM-DD HH:mm:ss");
     const orderEndTime =
         timeRange[1] && moment(timeRange[1]).format("YYYY-MM-DD HH:mm:ss");
+    const captureBeginTime =
+        timeRange[0] && moment(timeRange[0]).format("YYYY-MM-DD HH:mm:ss");
+    const captureEndTime =
+        timeRange[1] && moment(timeRange[1]).format("YYYY-MM-DD HH:mm:ss");
     let res = {
         ...rest,
         orderBeginTime,
         orderEndTime,
+        captureBeginTime,
+        captureEndTime
     };
     qualified && Object.assign(res, {
         orderStatus: qualified
     })
     return res
 };
-let preventNextQuery = false;
 
 export default () => {
     const [ready, setReady] = useState<boolean>(false)
@@ -73,24 +78,17 @@ export default () => {
 
     // 列表
     const loadOrderList = async (query = {} as any) => {
-        if (preventNextQuery) {
-            preventNextQuery = false
-            return
-        }
-        if (query.pageSize) {
-            preventNextQuery = true
-        }
         const { pageNum, pageSize } = orderList
         const res = await queryOrderList(
             formatQuery({
                 ...orderQuery,
-                pageNum,
-                pageSize,
+                pageNum: !!pageNum ? pageNum : 1,
+                pageSize: !!pageSize ? pageSize : 20,
                 ...query,
             })
         )
         if (res) {
-            setOrderList(res)
+            setOrderList(res);
         }
     };
     // 物料位置数据
@@ -186,8 +184,8 @@ export default () => {
         const { isAudited, ...rest } = formatQuery({
             ...imgQuery,
             orderNo: currentOrderId,
-            pageNum,
-            pageSize,
+            pageNum: !!pageNum ? pageNum : 1,
+            pageSize: !!pageSize ? pageSize : 20,
             ...query,
         })
         let data = { ...rest }
@@ -219,7 +217,7 @@ export default () => {
     const handleAudit = async (audit) => {
         setImgViewerLoading(true);
         const res = await auditImg({
-            audit,
+            auditStatus: audit,
             id: imgViewerData.imageId,
         });
         if (res) {
@@ -229,10 +227,10 @@ export default () => {
     }
 
     useEffect(() => {
-        ready && loadOrderList({ pageNum: 1 })
+        ready && loadOrderList({ pageNum: 1, pageSize: 20, })
     }, [ready, orderQuery])
     useEffect(() => {
-        ready && imgDrawerVisible && loadImgList({ pageNum: 1, orderNo: currentOrderId, })
+        ready && imgDrawerVisible && loadImgList({ pageNum: 1, pageSize: 20, orderNo: currentOrderId, })
     }, [ready, imgDrawerVisible, imgQuery, currentOrderId])
 
     return {

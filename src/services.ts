@@ -17,10 +17,7 @@ export const queryImgList = data => request(`${BASE_IP}track/pic/list/v1`, { met
 // 切换图片
 export const getSiblingImg = data => request(`${BASE_IP}track/pic/next/v1`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, data });
 // 审核图片
-export const auditImg = params => {
-    const { id, audit } = params;
-    return request(`${BASE_IP}track/audit/v1?id=${id}&auditStatus=${audit}`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, params })
-};
+export const auditImg = params => request(`${BASE_IP}track/audit/v1`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, params });
 
 /**
  * 数据统计

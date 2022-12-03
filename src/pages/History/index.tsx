@@ -168,7 +168,7 @@ const History = () => {
                 className="page-history-order-list"
                 columns={columns as any}
                 rowKey="orderNo"
-                dataSource={((orderList?.list || [])).map((i, index) => ({
+                dataSource={(!!orderList?.list ? orderList?.list : []).map((i, index) => ({
                     ...i,
                     index: index + 1
                 }))}

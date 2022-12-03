@@ -177,7 +177,7 @@ const ImgDrawer: React.FC = () => {
                 className="page-history-img-list"
                 columns={columns as any}
                 rowKey="id"
-                dataSource={imgList.list.map((i, index) => ({
+                dataSource={(!!imgList.list ? imgList.list : []).map((i, index) => ({
                     ...i,
                     index: index + 1
                 }))}

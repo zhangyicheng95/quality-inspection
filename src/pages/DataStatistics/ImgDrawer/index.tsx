@@ -67,21 +67,21 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
         setImgViewerVisible(true);
     }
 
-    const handleGetSiblingImg = (direction, id) => () => loadSiblingImg({
+    const handleGetSiblingImg = (direction, imageId) => () => loadSiblingImg({
         direction,
-        currentImgId: id
+        currentImgId: imageId
     })
 
     const columns = [
         { key: 'index', dataIndex: 'index', title: '序号', width: 50, align: 'center' },
-        { key: 'orderNo', dataIndex: 'orderNo', title: '订单号' },
-        { key: 'id', dataIndex: 'id', title: '图片序号', width: 80 },
+        { key: 'imageId', dataIndex: 'imageId', title: '图片序号', width: 80 },
+        { key: 'materialLocationName', dataIndex: 'materialLocationName', title: '告警位置', width: 100 },
         {
-            key: 'time', dataIndex: 'time', title: '图片时间',
-            render: time => format(time)
+            key: 'captureTime', dataIndex: 'captureTime', title: '图片时间',
+            render: text => format(text)
         },
         {
-            key: 'result', dataIndex: 'result', title: '检测结果', width: 80,
+            key: 'algStatus', dataIndex: 'algStatus', title: '检测结果', width: 80,
             render: (result, record) => {
                 const { algorithmData } = record;
                 return (
@@ -94,7 +94,7 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
             }
         },
         {
-            key: 'audit', dataIndex: 'audit', title: '人工判断', width: 80,
+            key: 'auditStatus', dataIndex: 'auditStatus', title: '人工判断', width: 80,
             render: result => (
                 <span className={CLASS_RESULT[result]}>
                     {LABEL_RESULT[result] || '--'}
@@ -194,7 +194,7 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
                 className="page-history-img-list"
                 columns={columns as any}
                 rowKey="id"
-                dataSource={(imgList?.list || []).map((i, index) => ({
+                dataSource={(!!imgList?.list ? imgList?.list : []).map((i, index) => ({
                     ...i,
                     index: index + 1
                 }))}
@@ -216,8 +216,8 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
                     loadImgList()
                 }}
                 onAudit={handleAudit}
-                onPrev={handleGetSiblingImg(-1, imgViewerData.id)}
-                onNext={handleGetSiblingImg(1, imgViewerData.id)}
+                onPrev={handleGetSiblingImg(-1, imgViewerData.imageId)}
+                onNext={handleGetSiblingImg(1, imgViewerData.imageId)}
             />}
         </Drawer>
     )

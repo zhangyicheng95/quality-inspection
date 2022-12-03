@@ -12,7 +12,7 @@ import {
 import moment from 'moment'
 
 const testImgUrl = 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimage.lnstzy.cn%2Faoaodcom%2F2018-09%2F03%2F201809030926107249.jpg.w1090.h1080.jpg%3Fdown&refer=http%3A%2F%2Fimage.lnstzy.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1638328435&t=78f1679e76c454f3c4b9fb7664d2a5a1'
-const format = (time) => moment(time).format("YYYY-MM-DD HH:mm:ss");
+const format = (time) => moment(Number(time)).format("YYYY-MM-DD HH:mm:ss");
 const zIndex = 2000
 const Mode = {
     CONTAIN: {
@@ -261,24 +261,24 @@ const ImgViewer: React.FC<IProps> = ({ data, onClose, onPrev, onNext, onAudit })
                 </div>
                 <div className="field">
                     <div className="title">图片序号</div>
-                    <div className="value">{data.id}</div>
+                    <div className="value">{data.imageId}</div>
                 </div>
                 <div className="field">
                     <div className="title">时间</div>
-                    <div className="value">{format(data.time)}</div>
+                    <div className="value">{format(data.captureTime)}</div>
                 </div>
                 <div className="field">
                     <div className="title">检测结果</div>
-                    <div className={CLASS_RESULT[data.result]}>
-                        {LABEL_RESULT[data.result]}
+                    <div className={CLASS_RESULT[data.algStatus]}>
+                        {LABEL_RESULT[data.algStatus]}
                     </div>
                 </div>
                 {!!onAudit && (
                     <div className="field">
                         <div className="title">审核结果</div>
                         {!!data.isAudited
-                            ? <div className={CLASS_RESULT[data.isAudited]}>
-                                {LABEL_RESULT[data.isAudited]}
+                            ? <div className={CLASS_RESULT[data.auditStatus]}>
+                                {LABEL_RESULT[data.auditStatus]}
                             </div>
                             : <div>
                                 <Button className="type-success" onClick={() => onAudit(1)}>正常</Button>

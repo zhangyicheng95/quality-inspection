@@ -22,8 +22,8 @@ const ImgModal: React.FC<Props> = (props) => {
     const [carType, setCarType] = useState(1);
     const [backImgType, setBackImgType] = useState(2);
 
-    const list = useMemo(() => {
-        return boundingBoxes.filter(i => i.labal == carType && i.type == backImgType);
+    const list: any = useMemo(() => {
+        return _.isArray(boundingBoxes) ? boundingBoxes.filter(i => i.labal == carType && i.type == backImgType) : [];
     }, [carType, boundingBoxes, backImgType]);
 
     const showImg = useMemo(() => {
@@ -76,7 +76,7 @@ const ImgModal: React.FC<Props> = (props) => {
                 <div
                     className={"body-left"}
                     style={{
-                        backgroundImage: `url(${globalSrcPath || ''}?timestamp=${new Date().getTime()})`,
+                        backgroundImage: globalSrcPath ? `url(${globalSrcPath || ''}?timestamp=${new Date().getTime()})` : '',
                         backgroundSize: 'auto 100%',
                         width: '40%'
                     }}
@@ -84,8 +84,9 @@ const ImgModal: React.FC<Props> = (props) => {
                     {
                         (list || []).map(
                             (item: any, index: number) => {
-                                const { points, type } = item;
-                                if (backImgType != type) {
+                                let { points, type } = item;
+                                points = _.isArray(points) ? points.filter(Boolean) : [];
+                                if (backImgType != type || !points.length) {
                                     return null;
                                 }
                                 return (
@@ -111,7 +112,7 @@ const ImgModal: React.FC<Props> = (props) => {
                 <div
                     className={`body-right flex-box`}
                     style={{
-                        backgroundImage: `url(${showImg || ''}?timestamp=${new Date().getTime()})`,
+                        backgroundImage: showImg ? `url(${showImg || ''}?timestamp=${new Date().getTime()})` : '',
                         width: '60%'
                     }}
                 >
