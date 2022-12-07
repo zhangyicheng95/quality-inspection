@@ -1,7 +1,7 @@
 import './index.less'
 import { useEffect, useState } from 'react'
 import { useModel } from 'umi'
-import { Form, Radio, DatePicker, Drawer, InputNumber, Table, Row, Col, Button, Select } from 'antd'
+import { Form, Radio, DatePicker, Drawer, InputNumber, Table, Row, Col, Button, Select, Tag } from 'antd'
 import ImgViewer from '@/components/ImgViewer'
 import useResize from '@/hooks/useResize'
 import { delay } from '@/utils/utils'
@@ -32,9 +32,9 @@ const resultOptions = [
     { value: 0, label: '不限' }
 ]
 const auditOptions = [
-    { value: 0, label: '未审核' },
-    { value: 2, label: '已审核' },
-    { value: 3, label: '不限' }
+    { value: -1, label: '未审核' },
+    { value: 1, label: '已审核' },
+    { value: 0, label: '不限' }
 ]
 
 interface Props {
@@ -74,6 +74,7 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
 
     const columns = [
         { key: 'index', dataIndex: 'index', title: '序号', width: 50, align: 'center' },
+        { key: 'orderNo', dataIndex: 'orderNo', title: '订单号', },
         { key: 'imageId', dataIndex: 'imageId', title: '图片序号', width: 80 },
         { key: 'materialLocationName', dataIndex: 'materialLocationName', title: '告警位置', width: 100 },
         {
@@ -142,7 +143,7 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
             <Form
                 form={form}
                 className="page-history-img-query"
-                initialValues={{}}
+                initialValues={{ algStatus: 0, auditStatus: 0, }}
                 onFinish={setImgQuery}
             >
                 <div className="left-ghost top" />
@@ -158,13 +159,28 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
                             label="起止时间"
                             name="timeRange"
                         >
-                            <RangePicker showTime />
+                            <RangePicker
+                                showTime
+                                renderExtraFooter={() => {
+                                    return <div className='flex-box' style={{ padding: 6, gap: 8 }}>
+                                        <Tag.CheckableTag checked onClick={() => {
+                                            form.setFieldsValue({ timeRange: [moment(new Date().getTime() - 29 * 24 * 60 * 60 * 1000), moment(new Date().getTime())] })
+                                        }}>近一个月</Tag.CheckableTag>
+                                        <Tag.CheckableTag checked onClick={() => {
+                                            form.setFieldsValue({ timeRange: [moment(new Date().getTime() - 6 * 24 * 60 * 60 * 1000), moment(new Date().getTime())] })
+                                        }}>近一周</Tag.CheckableTag>
+                                        <Tag.CheckableTag checked onClick={() => {
+                                            form.setFieldsValue({ timeRange: [moment(new Date().getTime() - 2 * 24 * 60 * 60 * 1000), moment(new Date().getTime())] })
+                                        }}>近3天</Tag.CheckableTag>
+                                    </div>
+                                }}
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={7} >
                         <Form.Item
                             label="检测结果"
-                            name="qualified"
+                            name="algStatus"
                         >
                             <Radio.Group optionType='button' options={resultOptions} />
                         </Form.Item>
@@ -172,7 +188,7 @@ const ImgDrawer: React.FC<Props> = (props: any) => {
                 </Row>
                 <Row gutter={24}>
                     <Col span={8}>
-                        <Form.Item label="审核状态" name="isAudited">
+                        <Form.Item label="审核状态" name="auditStatus">
                             <Radio.Group optionType='button' options={auditOptions} />
                         </Form.Item>
                     </Col>

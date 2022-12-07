@@ -1,7 +1,7 @@
 import './index.less'
 import { useEffect, useState } from 'react'
 import { useModel } from 'umi'
-import { Form, Radio, DatePicker, Drawer, InputNumber, Table, Row, Col, Button } from 'antd'
+import { Form, Radio, DatePicker, Drawer, InputNumber, Table, Row, Col, Button, Tag } from 'antd'
 import ImgViewer from '@/components/ImgViewer'
 import useResize from '@/hooks/useResize'
 import { delay } from '@/utils/utils'
@@ -30,9 +30,9 @@ const resultOptions = [
     { value: 0, label: '不限' }
 ]
 const auditOptions = [
-    { value: 0, label: '未审核' },
-    { value: 2, label: '已审核' },
-    { value: 3, label: '不限' }
+    { value: -1, label: '未审核' },
+    { value: 1, label: '已审核' },
+    { value: 0, label: '不限' }
 ]
 
 const ImgDrawer: React.FC = () => {
@@ -128,26 +128,41 @@ const ImgDrawer: React.FC = () => {
             <Form
                 form={form}
                 className="page-history-img-query"
-                initialValues={{}}
+                initialValues={{ algStatus: 0, auditStatus: 0, }}
                 onFinish={setImgQuery}
             >
                 <div className="left-ghost top" />
                 <div className="left-ghost bottom" />
                 <Row gutter={24}>
                     <Col span={7}>
-                        <Form.Item label="图片序号" name="id">
+                        <Form.Item label="图片序号" name="imgId">
                             <InputNumber min={0} precision={0} />
                         </Form.Item>
                     </Col>
                     <Col span={10} >
                         <Form.Item label="起止时间" name="timeRange">
-                            <RangePicker showTime />
+                            <RangePicker
+                                showTime
+                                renderExtraFooter={() => {
+                                    return <div className='flex-box' style={{ padding: 6, gap: 8 }}>
+                                        <Tag.CheckableTag checked onClick={() => {
+                                            form.setFieldsValue({ timeRange: [moment(new Date().getTime() - 29 * 24 * 60 * 60 * 1000), moment(new Date().getTime())] })
+                                        }}>近一个月</Tag.CheckableTag>
+                                        <Tag.CheckableTag checked onClick={() => {
+                                            form.setFieldsValue({ timeRange: [moment(new Date().getTime() - 6 * 24 * 60 * 60 * 1000), moment(new Date().getTime())] })
+                                        }}>近一周</Tag.CheckableTag>
+                                        <Tag.CheckableTag checked onClick={() => {
+                                            form.setFieldsValue({ timeRange: [moment(new Date().getTime() - 2 * 24 * 60 * 60 * 1000), moment(new Date().getTime())] })
+                                        }}>近3天</Tag.CheckableTag>
+                                    </div>
+                                }}
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={7} >
                         <Form.Item
                             label="检测结果"
-                            name="qualified"
+                            name="algStatus"
                         >
                             <Radio.Group optionType='button' options={resultOptions} />
                         </Form.Item>
@@ -155,7 +170,7 @@ const ImgDrawer: React.FC = () => {
                 </Row>
                 <Row gutter={24}>
                     <Col span={8}>
-                        <Form.Item label="审核状态" name="isAudited">
+                        <Form.Item label="审核状态" name="auditStatus">
                             <Radio.Group optionType='button' options={auditOptions} />
                         </Form.Item>
                     </Col>
@@ -194,9 +209,9 @@ const ImgDrawer: React.FC = () => {
             {imgViewerVisible && <ImgViewer
                 data={imgViewerData}
                 onClose={() => {
-                    setImgViewerVisible(false)
-                    setImgViewerData({})
-                    loadImgList()
+                    setImgViewerVisible(false);
+                    setImgViewerData({});
+                    loadImgList({}, false);
                 }}
                 onAudit={handleAudit}
                 onPrev={handleGetSiblingImg(-1, imgViewerData.imageId)}

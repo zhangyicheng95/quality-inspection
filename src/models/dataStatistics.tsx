@@ -1,4 +1,4 @@
-import { staticsOrderList, staticsImgList, queryImgList, getSiblingImg, auditImg, staticsLabelList } from "@/services";
+import { staticsOrderList, staticsImgList, queryImgList, getSiblingImg, auditImg, staticsDefectList } from "@/services";
 import { useEffect, useState } from 'react';
 import { message } from 'antd';
 
@@ -16,11 +16,11 @@ const getInitialOrderQuery = (currentType = 'order') => ({
 const getInitialImgQuery = () => ({
     id: undefined,
     timeRange: [],
-    qualified: 0,
-    isAudited: 3,
+    algStatus: 0,
+    auditStatus: 0,
 });
 const formatQuery = (query) => {
-    const { timeRange = [], qualified, ...rest } = query;
+    const { timeRange = [], orderStatus, algStatus, auditStatus, ...rest } = query;
     const startTime =
         !!timeRange && timeRange[0] ? moment(timeRange[0]).format("YYYY-MM-DD HH:mm:ss") : undefined;
     const endTime =
@@ -42,9 +42,15 @@ const formatQuery = (query) => {
         captureBeginTime,
         captureEndTime
     };
-    qualified && Object.assign(res, {
-        orderStatus: qualified
-    })
+    orderStatus && Object.assign(res, {
+        orderStatus
+    });
+    algStatus && Object.assign(res, {
+        algStatus
+    });
+    auditStatus && Object.assign(res, {
+        auditStatus
+    });
     return res
 };
 let preventNextQuery = false;
@@ -73,10 +79,6 @@ export default () => {
         setCurrentOrderIdList([]);
         setImgDrawerVisible(false);
     }
-    const patchImg = (id, isAudited) => setImgList({
-        ...imgList,
-        list: imgList.list.map(i => i.id === id ? { ...i, isAudited } : i)
-    })
     const unmount = (currentType: string) => {
         setReady(false)
         resetImgDrawer()
@@ -90,32 +92,23 @@ export default () => {
             return
         }
         const { currentType, ...rest } = orderQuery;
+        const { orderBeginTime, orderEndTime, captureBeginTime, captureEndTime, ...que } = formatQuery({
+            ...rest,
+        });
         if (currentType === 'order') {
-            staticsOrderList(
-                formatQuery({
-                    ...rest,
-                })
-            ).then((res) => {
+            staticsOrderList(que).then((res) => {
                 if (res) {
                     setOrderList(res);
                 }
             });
         } else if (currentType === 'img') {
-            staticsImgList(
-                formatQuery({
-                    ...rest,
-                })
-            ).then((res) => {
+            staticsImgList(que).then((res) => {
                 if (res) {
                     setOrderList(res);
                 }
             });
-        } else if (currentType === 'label') {
-            staticsLabelList(
-                formatQuery({
-                    ...rest,
-                })
-            ).then((res) => {
+        } else if (currentType === 'defect') {
+            staticsDefectList(que).then((res) => {
                 if (res) {
                     setOrderList(res);
                 }
@@ -134,7 +127,7 @@ export default () => {
     // 弹出抽屉，列表
     const loadImgList = async (query = {} as any) => {
         const { pageNum, pageSize } = imgList
-        const { isAudited, ...rest } = formatQuery({
+        const { orderBeginTime, orderEndTime, startTime, endTime, ...rest } = formatQuery({
             ...imgQuery,
             // orderNo: currentOrderId,
             pageNum,
@@ -142,9 +135,6 @@ export default () => {
             ...query,
         })
         let data = { ...rest }
-        if (isAudited !== 3) {
-            Object.assign(data, { isAudited });
-        }
         const res = await queryImgList(data);
         if (res) {
             res && setImgList(res);
@@ -152,15 +142,12 @@ export default () => {
     }
     // 切换图片
     const loadSiblingImg = async (query = {}) => {
-        const { isAudited, ...rest } = formatQuery({
+        const { orderBeginTime, orderEndTime, startTime, endTime, ...rest } = formatQuery({
             ...imgQuery,
             orderNo: currentOrderId,
             ...query,
         })
         let data = { ...rest }
-        if (isAudited !== 3) {
-            Object.assign(data, { isAudited })
-        }
         const res = await getSiblingImg(data)
         if (res) {
             setImgViewerData(res);
@@ -186,6 +173,7 @@ export default () => {
     useEffect(() => {
         imgDrawerVisible && loadImgList({
             pageNum: 1,
+            pageSize: 20
             //  orderNo: currentOrderId, 
         })
     }, [ready, imgDrawerVisible, imgQuery, currentOrderId]);
@@ -200,7 +188,7 @@ export default () => {
         imgList, setImgList, loadImgList,
         imgQuery, setImgQuery,
         resetOrderQuery, resetImgQuery, resetImgDrawer,
-        patchImg, unmount, staticsOrderList, queryImgList,
+        unmount, staticsOrderList, queryImgList,
         handleAudit, loadSiblingImg, handleViewOrder,
         imgViewerVisible, imgViewerData, imgViewerLoading,
         setImgViewerVisible, setImgViewerData, setImgViewerLoading

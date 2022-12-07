@@ -1,7 +1,7 @@
 import './index.less';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useModel, } from 'umi';
-import { DatePicker, Button, Form, Row, Col, } from 'antd';
+import { DatePicker, Button, Form, Row, Col, Tag, } from 'antd';
 import PanelTitle from '@/components/PanelTitle';
 import ImgDrawer from './ImgDrawer';
 import classNames from 'classnames';
@@ -15,34 +15,36 @@ const RangePicker: any = DatePicker.RangePicker;
 const labelFormat = (type: string) => {
     switch (type) {
         case '1':
-            return '法兰';
+            return '毛刺';
             break;
         case '2':
-            return '球罐';
+            return '划痕';
             break;
         case '3':
-            return '前锥';
+            return '擦伤';
             break;
         case '4':
-            return '中桶';
+            return '流挂';
             break;
         case '5':
-            return '小中桶';
+            return '颗粒';
             break;
         case '6':
-            return '后锥';
+            return '穿孔';
             break;
         case '7':
-            return '滚道(大)';
+            return '胶开裂';
             break;
         case '8':
-            return '滚道(小)';
+            return '漏底';
             break;
         case '9':
-            return '圈A';
+            return '间隙';
             break;
         case '10':
-            return '圈B';
+            return '面差';
+        case '11':
+            return '不贴合';
             break;
     }
 }
@@ -53,7 +55,7 @@ const DataStatistics = () => {
     const [chartsData, setChartsData] = useState([]);
     const [chartsFooter, setChartsFooter] = useState([]);
     const [pieChartsData, setPieChartsData] = useState([]);
-    const [pieChartsTitle, setPieChartsTitle] = useState('法兰');
+    const [pieChartsTitle, setPieChartsTitle] = useState('毛刺');
     const [timeRange, setTimeRange] = useState([moment(new Date().getTime() - 6 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]);
 
     const {
@@ -81,7 +83,7 @@ const DataStatistics = () => {
         const startTime = new Date(moment(timeRange[0]).format('YYYY-MM-DD')).getTime();
         const endTime = new Date(moment(timeRange[1]).format('YYYY-MM-DD')).getTime();
         if (_.isObject(orderList) && !_.isEmpty(orderList)) {
-            if (currentType === 'label') {
+            if (currentType === 'defect') {
                 const result = Object.entries(orderList).map((item: any) => {
                     const { normal, abNormal } = item[1];
                     const footer = item[0];
@@ -125,11 +127,11 @@ const DataStatistics = () => {
 
             }
         } else {
-            setChartsData([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]);
+            setChartsData([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]);
             setChartsFooter(prev => {
-                if (currentType === 'label') {
+                if (currentType === 'defect') {
                     let obj = [];
-                    for (let i = 1; i < 11; i++) {
+                    for (let i = 1; i < 12; i++) {
                         obj = obj.concat(labelFormat(i + ''));
                     }
                     return obj;
@@ -190,19 +192,34 @@ const DataStatistics = () => {
                                     >
                                         图片维度
                                     </div>
-                                    {/* <div
-                                        className={classNames("statistic-btn", { active: currentType === 'label' })}
+                                    <div
+                                        className={classNames("statistic-btn", { active: currentType === 'defect' })}
                                         onClick={() => {
-                                            setCurrentType('label');
+                                            setCurrentType('defect');
                                             onCancel();
                                         }}
                                     >
-                                        焊缝维度
-                                    </div> */}
+                                        缺陷维度
+                                    </div>
                                 </Col>
                                 <Col span={7} offset={2}>
                                     <Form.Item label="发生时间" name="timeRange" >
-                                        <RangePicker showTime />
+                                        <RangePicker
+                                            showTime
+                                            renderExtraFooter={() => {
+                                                return <div className='flex-box' style={{ padding: 6, gap: 8 }}>
+                                                    <Tag.CheckableTag checked onClick={() => {
+                                                        form.setFieldsValue({ timeRange: [moment(new Date().getTime() - 29 * 24 * 60 * 60 * 1000), moment(new Date().getTime())] })
+                                                    }}>近一个月</Tag.CheckableTag>
+                                                    <Tag.CheckableTag checked onClick={() => {
+                                                        form.setFieldsValue({ timeRange: [moment(new Date().getTime() - 6 * 24 * 60 * 60 * 1000), moment(new Date().getTime())] })
+                                                    }}>近一周</Tag.CheckableTag>
+                                                    <Tag.CheckableTag checked onClick={() => {
+                                                        form.setFieldsValue({ timeRange: [moment(new Date().getTime() - 2 * 24 * 60 * 60 * 1000), moment(new Date().getTime())] })
+                                                    }}>近3天</Tag.CheckableTag>
+                                                </div>
+                                            }}
+                                        />
                                     </Form.Item>
                                 </Col>
                                 <Col span={6} offset={2} className="btns">
@@ -234,10 +251,11 @@ const DataStatistics = () => {
                             }
                             setCurrentType((prev: string) => {
                                 const { name, seriesId, dataIndex } = e;
+                                console.log(e)
                                 setImgQuery((pre: any) => {
                                     return Object.assign({}, pre, {
-                                        qualified: seriesId === 'normal' ? 1 : seriesId === 'abNormal' ? -1 : 0
-                                    }, prev === 'label' ? {} : {
+                                        algStatus: seriesId === 'normal' ? 1 : seriesId === 'abNormal' ? -1 : 0
+                                    }, prev === 'defect' ? {} : {
                                         timeRange: [moment(new Date(name).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(name).getTime() + 16 * 60 * 60 * 1000 - 1000)],
                                     })
                                 })
@@ -261,7 +279,7 @@ const DataStatistics = () => {
                 <div className="right">
                     <PieCharts
                         data={pieChartsData}
-                        title={currentType === 'label' ? pieChartsTitle : ''}
+                        title={currentType === 'defect' ? pieChartsTitle : ''}
                     />
                 </div>
             </div>

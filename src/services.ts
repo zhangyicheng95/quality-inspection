@@ -11,7 +11,7 @@ export const queryOrderList = data => request(`${BASE_IP}track/order/list/v1`, {
 // 查看历史
 export const getOrderDetail = params => request(`${BASE_IP}track/order/post/detail`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, params });
 // 获取物料位置数据
-export const getMaterialLocationList = () => request(`${BASE_IP}track/materialLocation/list?timestamp=${new Date().getTime()}`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, });
+export const getMaterialLocationList = params => request(`${BASE_IP}track/materialLocation/list`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, params });
 // 图片列表
 export const queryImgList = data => request(`${BASE_IP}track/pic/list/v1`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, data });
 // 切换图片
@@ -26,5 +26,5 @@ export const auditImg = params => request(`${BASE_IP}track/audit/v1`, { method: 
 export const staticsOrderList = params => request(`${BASE_IP}track/statics/order`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, params });
 // 图片维度
 export const staticsImgList = params => request(`${BASE_IP}track/statics/img`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, params });
-// 焊缝维度
-export const staticsLabelList = params => request(`${BASE_IP}track/statics/label`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, params });
+// 缺陷维度
+export const staticsDefectList = params => request(`${BASE_IP}track/statics/defect`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, params });

@@ -70,21 +70,21 @@ const Realtime: React.FC = () => {
   }
 
   const columns = [
-    { key: 'index', dataIndex: 'index', title: '序号', width: 50, align: 'center' },
+    { key: 'index', dataIndex: 'index', title: '序号', width: 100, align: 'center' },
     {
-      key: 'orderNo', dataIndex: 'orderNo', title: '订单号',
-      render: (orderNo) => <Button type="text" onClick={viewOrder(orderNo)}>{orderNo}</Button>
+      key: 'orderId', dataIndex: 'orderId', title: '订单号',
+      render: (text) => <Button type="text" onClick={viewOrder(text)}>{text}</Button>
     },
     {
-      key: 'id', dataIndex: 'id', title: '图片序号', width: 75,
-      render: (id, { orderNo }) => <Button type="text" onClick={viewImg(orderNo, id)}>{id}</Button>
+      key: 'id', dataIndex: 'id', title: '图片序号', width: 100,
+      render: (text, { orderId }) => <Button type="text" onClick={viewImg(orderId, text)}>{text}</Button>
     },
     {
-      key: 'time', dataIndex: 'time', title: '图片时间', width: 150,
-      render: time => format(time)
+      key: 'time', dataIndex: 'time', title: '图片时间', width: 200,
+      render: text => format(text)
     },
     {
-      key: 'result', dataIndex: 'result', title: '检测结果', width: 75,
+      key: 'result', dataIndex: 'result', title: '检测结果', width: 100,
       render: (result, record) => {
         const { algorithmData } = record;
         return (
@@ -171,9 +171,9 @@ const Realtime: React.FC = () => {
             <Fragment>
               <div className="current-img-info">
                 <span className="field" style={{ marginRight: 20 }}>{format(current1.time)}</span>
-                <span className="field">订单号:&nbsp;{current1.orderNo || ''}</span>
+                <span className="field">订单号:&nbsp;{current1.orderId || ''}</span>
                 <span className="field">图片序号:&nbsp;{current1.id || ''}</span>
-                <span className="field">图片名称:&nbsp;{current1?.imageUrl?.split('track-inspect/')[1] || ''}</span>
+                <span className="field">图片名称:&nbsp;{current1?.imageUrl?.split('/')[current1?.imageUrl?.split('/').length - 1] || ''}</span>
               </div>
               {
                 isObject(processResult) && !isEmpty(processResult) ?

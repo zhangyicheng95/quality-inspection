@@ -1,7 +1,7 @@
 import './index.less'
 import { Fragment, useEffect, useState } from 'react'
 import { useModel, history } from 'umi'
-import { Input, DatePicker, Table, Button, Form, Row, Col, Select, Modal, message } from 'antd'
+import { Input, DatePicker, Table, Button, Form, Row, Col, Select, Tag } from 'antd'
 import PanelTitle from '@/components/PanelTitle'
 import useResize from '@/hooks/useResize'
 import ImgDrawer from './ImgDrawer'
@@ -30,7 +30,7 @@ const History = () => {
     const [form] = Form.useForm();
     const { height } = useResize();
     const {
-        setReady, setOrderQuery, imgQuery, setImgQuery, orderList,
+        setReady, setOrderQuery, imgQuery, setImgQuery, orderList, loadImgList,
         loadOrderList, unmount, handleViewOrder, setImgDrawerVisible, setCurrentOrderId,
         handleOrderDetail, processResult, setProcessResult, loadMaterialList,
     } = useModel('history' as any);
@@ -40,16 +40,17 @@ const History = () => {
 
     useEffect(() => unmount, []);
     useEffect(() => {
-        if (query.id) {
-            setOrderQuery({ orderNo: query.id })
-            form.setFieldsValue({ orderNo: query.id })
+        if (query.orderNo) {
+            setOrderQuery({ orderNo: query.orderNo });
+            form.setFieldsValue({ orderNo: query.orderNo });
+            setCurrentOrderId(query.orderNo);
             if (query.id) {
+                setImgDrawerVisible(true);
                 setImgQuery({
                     ...imgQuery,
-                    id: query.id
-                })
-                setCurrentOrderId(query.id)
-                setImgDrawerVisible(true)
+                    imgId: query.id
+                });
+                loadImgList({ orderNo: query.orderNo }, true);
             }
         }
         setReady(true)
@@ -99,11 +100,11 @@ const History = () => {
         {
             key: 'view', dataIndex: 'view', title: '查看', width: 180,
             render: (_, record) => {
-                const { orderNo } = record;
+                const { orderNo, materialId } = record;
                 return <div className="flex-box">
                     <Button
                         type="text"
-                        onClick={() => loadMaterialList(orderNo)}
+                        onClick={() => loadMaterialList(orderNo, materialId)}
                     >
                         查看历史
                     </Button>
@@ -138,7 +139,22 @@ const History = () => {
                     </Col>
                     <Col span={6} offset={2}>
                         <Form.Item label="订单时间" name="timeRange">
-                            <RangePicker showTime />
+                            <RangePicker
+                                showTime
+                                renderExtraFooter={() => {
+                                    return <div className='flex-box' style={{ padding: 6, gap: 8 }}>
+                                        <Tag.CheckableTag checked onClick={() => {
+                                            form.setFieldsValue({ timeRange: [moment(new Date().getTime() - 29 * 24 * 60 * 60 * 1000), moment(new Date().getTime())] })
+                                        }}>近一个月</Tag.CheckableTag>
+                                        <Tag.CheckableTag checked onClick={() => {
+                                            form.setFieldsValue({ timeRange: [moment(new Date().getTime() - 6 * 24 * 60 * 60 * 1000), moment(new Date().getTime())] })
+                                        }}>近一周</Tag.CheckableTag>
+                                        <Tag.CheckableTag checked onClick={() => {
+                                            form.setFieldsValue({ timeRange: [moment(new Date().getTime() - 2 * 24 * 60 * 60 * 1000), moment(new Date().getTime())] })
+                                        }}>近3天</Tag.CheckableTag>
+                                    </div>
+                                }}
+                            />
                         </Form.Item>
                     </Col>
                     <Col span={4}>
