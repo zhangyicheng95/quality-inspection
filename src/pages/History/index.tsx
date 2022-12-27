@@ -8,6 +8,7 @@ import ImgDrawer from './ImgDrawer'
 import { isEmpty, isObject } from 'lodash'
 import ImgModal from '../Realtime/ImgModal'
 import moment from 'moment'
+import { formatTimeToDate } from '@/utils/utils'
 
 const { Option } = Select;
 const RangePicker: any = DatePicker.RangePicker;
@@ -84,6 +85,12 @@ const History = () => {
         {
             key: 'orderTime', dataIndex: 'orderTime', title: '订单时间', render: (text) => {
                 return moment(text).format('YYYY-MM-DD HH:mm:ss')
+            }
+        },
+        {
+            key: 'orderRunTime', dataIndex: 'orderRunTime', title: '运行时长', render: (text, record) => {
+                const { orderTime = 0, orderUpdateTime = 0 } = record;
+                return formatTimeToDate(Number(orderUpdateTime) - Number(orderTime))
             }
         },
         { key: 'alarmImgCount', dataIndex: 'alarmImgCount', title: '报警图片数量', className: "col-alarm" },

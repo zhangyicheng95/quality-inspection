@@ -22,7 +22,7 @@ const ImgModal: React.FC<Props> = (props) => {
     // @ts-ignore
     const [carType, setCarType] = useState(_.isObject(materialList[0]) && _.hasIn(materialList[0], 'id') && materialList[0]?.id);
     const [backImgType, setBackImgType] = useState(2);
-    const [ifShowOk, setIfShowOk] = useState(true);
+    const [ifShowOk, setIfShowOk] = useState(false);
     const [backImgSize, setBackImgSize] = useState(1);
 
     const list: any = useMemo(() => {

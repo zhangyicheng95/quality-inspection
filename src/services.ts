@@ -26,5 +26,7 @@ export const auditImg = params => request(`${BASE_IP}track/audit/v1`, { method: 
 export const staticsOrderList = params => request(`${BASE_IP}track/statics/order`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, params });
 // 图片维度
 export const staticsImgList = params => request(`${BASE_IP}track/statics/img`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, params });
+// 缺陷数据字典
+export const getDefectList = () => request(`${BASE_IP}track/defect/list?timestamp=${new Date().getTime()}`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, });
 // 缺陷维度
 export const staticsDefectList = params => request(`${BASE_IP}track/statics/defect`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, params });

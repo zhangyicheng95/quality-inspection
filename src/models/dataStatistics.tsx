@@ -1,4 +1,4 @@
-import { staticsOrderList, staticsImgList, queryImgList, getSiblingImg, auditImg, staticsDefectList } from "@/services";
+import { staticsOrderList, staticsImgList, queryImgList, getSiblingImg, auditImg, staticsDefectList, getDefectList } from "@/services";
 import { useEffect, useState } from 'react';
 import { message } from 'antd';
 
@@ -57,7 +57,8 @@ let preventNextQuery = false;
 
 export default () => {
     const [ready, setReady] = useState<boolean>(false)
-    const [orderQuery, setOrderQuery] = useState<any>(getInitialOrderQuery())
+    const [orderQuery, setOrderQuery] = useState<any>(getInitialOrderQuery());
+    const [defectList, setDefectList] = useState<any>({});
     const [orderList, setOrderList] = useState<any>({});
 
     const [currentOrderIdList, setCurrentOrderIdList] = useState<any>([]);
@@ -108,9 +109,21 @@ export default () => {
                 }
             });
         } else if (currentType === 'defect') {
-            staticsDefectList(que).then((res) => {
+            getDefectList().then(res => {
                 if (res) {
-                    setOrderList(res);
+                    setDefectList(() => {
+                        const result = res.reduce((pre, cen) => {
+                            return Object.assign({}, pre, {
+                                [cen.id + '']: cen.cname
+                            });
+                        }, {});
+                        return result;
+                    });
+                    staticsDefectList(que).then((res) => {
+                        if (res) {
+                            setOrderList(res);
+                        }
+                    });
                 }
             });
         }
@@ -182,6 +195,7 @@ export default () => {
         ready, setReady,
         orderQuery, setOrderQuery,
         orderList, setOrderList, loadOrderList,
+        defectList,
         currentOrderIdList, setCurrentOrderIdList,
         currentOrderId, setCurrentOrderId,
         imgDrawerVisible, setImgDrawerVisible,

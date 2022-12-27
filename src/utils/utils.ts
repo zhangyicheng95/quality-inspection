@@ -6,19 +6,19 @@ const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(
 export const isUrl = (path: string): boolean => reg.test(path);
 
 export const isAntDesignPro = (): boolean => {
-  if (ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site') {
-    return true;
-  }
-  return window.location.hostname === 'preview.pro.ant.design';
+    if (ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site') {
+        return true;
+    }
+    return window.location.hostname === 'preview.pro.ant.design';
 };
 
 // 给官方演示站点用，用于关闭真实开发环境不需要使用的特性
 export const isAntDesignProOrDev = (): boolean => {
-  const { NODE_ENV } = process.env;
-  if (NODE_ENV === 'development') {
-    return true;
-  }
-  return isAntDesignPro();
+    const { NODE_ENV } = process.env;
+    if (NODE_ENV === 'development') {
+        return true;
+    }
+    return isAntDesignPro();
 };
 
 export const random = {
@@ -34,12 +34,12 @@ export const random = {
     }
 };
 
-export const set = (state, {keys = [], payload}) => {
+export const set = (state, { keys = [], payload }) => {
     if (keys.length) {
         const [curKey, ...restKeys] = keys;
         return {
             ...state,
-            [curKey]: set(state[curKey], {keys: restKeys, payload})
+            [curKey]: set(state[curKey], { keys: restKeys, payload })
         }
     }
     return {
@@ -59,7 +59,7 @@ export interface IObjMap {
 export const arr2obj = (arr: (string | any)[], key?: string): IObjMap => {
     return arr.reduce((pre, cur) => ({
         ...pre,
-        [key ? cur[key] : cur ]: true,
+        [key ? cur[key] : cur]: true,
     }), {})
 }
 
@@ -80,12 +80,36 @@ export function titleCase(s) {
     });
 }
 
-export function copy2clipbord (str: string) {
+export function copy2clipbord(str: string) {
     const input = document.createElement('input');
-	document.body.appendChild(input);
- 	input.setAttribute('value', str);
-	input.select();
-	const res = document.execCommand('copy')
+    document.body.appendChild(input);
+    input.setAttribute('value', str);
+    input.select();
+    const res = document.execCommand('copy')
     res && message.success('文本复制到剪切板成功!')
     document.body.removeChild(input);
+}
+
+export function formatTimeToDate(date = 0) {
+    let newDate: any = date / 1000,
+        result = '';
+
+    var d: any = parseInt(newDate / 3600 / 24 + '');
+    var h: any = parseInt((newDate % (24 * 3600)) / 3600 + '');
+    var m = parseInt((newDate % 3600) / 60 + '');
+    var s = ((newDate % 3600) % 60).toFixed(0);
+
+    if (d > 0) {
+        result += `${d}天`;
+    }
+    if (h > 0) {
+        result += `${h}小时`;
+    }
+    if (m > 0) {
+        result += `${m}分`;
+    }
+    if (Number(s) > 0) {
+        result += `${s}秒`;
+    }
+    return result;
 }

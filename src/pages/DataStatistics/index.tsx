@@ -11,43 +11,6 @@ import moment from 'moment';
 import PieCharts from './PieCharts';
 
 const RangePicker: any = DatePicker.RangePicker;
-// 搅拌桶名称对应关系
-const labelFormat = (type: string) => {
-    switch (type) {
-        case '1':
-            return '毛刺';
-            break;
-        case '2':
-            return '划痕';
-            break;
-        case '3':
-            return '擦伤';
-            break;
-        case '4':
-            return '流挂';
-            break;
-        case '5':
-            return '颗粒';
-            break;
-        case '6':
-            return '穿孔';
-            break;
-        case '7':
-            return '胶开裂';
-            break;
-        case '8':
-            return '漏底';
-            break;
-        case '9':
-            return '间隙';
-            break;
-        case '10':
-            return '面差';
-        case '11':
-            return '不贴合';
-            break;
-    }
-}
 
 const DataStatistics = () => {
     const [form] = Form.useForm();
@@ -59,7 +22,7 @@ const DataStatistics = () => {
     const [timeRange, setTimeRange] = useState([moment(new Date().getTime() - 6 * 24 * 60 * 60 * 1000), moment(new Date().getTime())]);
 
     const {
-        setReady, setOrderQuery, imgDrawerVisible,
+        setReady, setOrderQuery, imgDrawerVisible, defectList,
         orderList, unmount, handleViewOrder, setImgQuery,
     } = useModel('dataStatistics' as any)
 
@@ -82,17 +45,23 @@ const DataStatistics = () => {
     useEffect(() => {
         const startTime = new Date(moment(timeRange[0]).format('YYYY-MM-DD')).getTime();
         const endTime = new Date(moment(timeRange[1]).format('YYYY-MM-DD')).getTime();
-        if (_.isObject(orderList) && !_.isEmpty(orderList)) {
-            if (currentType === 'defect') {
-                const result = Object.entries(orderList).map((item: any) => {
-                    const { normal, abNormal } = item[1];
-                    const footer = item[0];
-                    const data = [_.isArray(normal) ? normal.length : normal || undefined, _.isArray(abNormal) ? abNormal.length : abNormal || undefined];
-                    return [footer, data];
+        if (!_.isEmpty(orderList)) {
+            if (currentType === 'defect' && _.isArray(orderList) && !_.isEmpty(defectList)) {
+                let data = [],
+                    footer = [],
+                    pie = [];
+                (orderList || []).forEach((item: any) => {
+                    const { key, value } = item;
+                    data = data.concat(value);
+                    footer = footer.concat(defectList[key + '']);
+                    pie = pie.concat({
+                        name: defectList[key + ''],
+                        value: value,
+                    })
                 });
-                setChartsData(result.map(item => item[1]));
-                setChartsFooter(result.map(item => labelFormat(item[0] + '')));
-                setPieChartsData([{ name: '正常', value: result[0][1][0] }, { name: '异常', value: result[0][1][1] }])
+                setChartsData(data);
+                setChartsFooter(footer);
+                setPieChartsData(pie);
             } else {
                 let obj = {};
                 if (Object.keys(orderList).length === ((endTime - startTime) / 1000 / 60 / 60 / 24 + 1)) {
@@ -107,6 +76,7 @@ const DataStatistics = () => {
                     }
                     obj = Object.assign({}, obj, orderList);
                 }
+
                 const result = Object.entries(obj).sort((a: any, b: any) => a[0] - b[0]).map((item: any) => {
                     const { normal, abNormal } = item[1];
                     const footer = new Date(item[0]).getTime();
@@ -127,24 +97,29 @@ const DataStatistics = () => {
 
             }
         } else {
-            setChartsData([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]);
-            setChartsFooter(prev => {
-                if (currentType === 'defect') {
+            if (currentType === 'defect') {
+                setChartsData([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                setChartsFooter(() => {
                     let obj = [];
-                    for (let i = 1; i < 12; i++) {
-                        obj = obj.concat(labelFormat(i + ''));
+                    for (let i = 1; i < Object.keys(defectList).length + 1; i++) {
+                        obj = obj.concat(defectList[i + '']);
                     }
                     return obj;
-                }
-                let obj = [];
-                for (let i = 0; i < ((endTime - startTime) / 1000 / 60 / 60 / 24 + 1); i++) {
-                    obj = obj.concat(moment(new Date(startTime + i * 24 * 60 * 60 * 1000)).format('YYYY-MM-DD'));
-                }
-                return obj;
-            });
-            setPieChartsData([{ name: '正常', value: 0 }, { name: '异常', value: 0 }])
-            // setChartsData([[320, 120], [132, 302], [301, 101], [334, 134], [390, 90], [330, 230], [320, 210]]);
-            // setChartsFooter([labelFormat('1'), labelFormat('2'), labelFormat('3'), 4, 5, 6, 7]);
+                });
+                setPieChartsData([{ name: '', value: 0 }]);
+            } else {
+                setChartsData([[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]);
+                setChartsFooter(prev => {
+                    let obj = [];
+                    for (let i = 0; i < ((endTime - startTime) / 1000 / 60 / 60 / 24 + 1); i++) {
+                        obj = obj.concat(moment(new Date(startTime + i * 24 * 60 * 60 * 1000)).format('YYYY-MM-DD'));
+                    }
+                    return obj;
+                });
+                setPieChartsData([{ name: '正常', value: 0 }, { name: '异常', value: 0 }])
+                // setChartsData([[320, 120], [132, 302], [301, 101], [334, 134], [390, 90], [330, 230], [320, 210]]);
+                // setChartsFooter([labelFormat('1'), labelFormat('2'), labelFormat('3'), 4, 5, 6, 7]);
+            }
         }
     }, [orderList, currentType, timeRange]);
 
@@ -177,6 +152,9 @@ const DataStatistics = () => {
                                     <div
                                         className={classNames("statistic-btn", { active: currentType === 'order' })}
                                         onClick={() => {
+                                            setChartsData([]);
+                                            setChartsFooter([]);
+                                            setPieChartsData([]);
                                             setCurrentType('order');
                                             onCancel();
                                         }}
@@ -186,6 +164,9 @@ const DataStatistics = () => {
                                     <div
                                         className={classNames("statistic-btn", { active: currentType === 'img' })}
                                         onClick={() => {
+                                            setChartsData([]);
+                                            setChartsFooter([]);
+                                            setPieChartsData([]);
                                             setCurrentType('img');
                                             onCancel();
                                         }}
@@ -195,6 +176,9 @@ const DataStatistics = () => {
                                     <div
                                         className={classNames("statistic-btn", { active: currentType === 'defect' })}
                                         onClick={() => {
+                                            setChartsData([]);
+                                            setChartsFooter([]);
+                                            setPieChartsData([]);
                                             setCurrentType('defect');
                                             onCancel();
                                         }}
@@ -241,6 +225,7 @@ const DataStatistics = () => {
             <div className="page-history-order-list flex-box" style={isIframe ? { height: '100%', margin: 0 } : {}}>
                 <div className="left">
                     <BarCharts
+                        currentType={currentType}
                         data={chartsData}
                         Xdata={chartsFooter}
                         onClick={(e: any) => {
@@ -257,8 +242,8 @@ const DataStatistics = () => {
                                         algStatus: seriesId === 'normal' ? 1 : seriesId === 'abNormal' ? -1 : 0
                                     }, prev === 'defect' ? {} : {
                                         timeRange: [moment(new Date(name).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(name).getTime() + 16 * 60 * 60 * 1000 - 1000)],
-                                    })
-                                })
+                                    });
+                                });
                                 if (prev === 'order') {
                                     const data = chartsData[dataIndex][seriesId];
                                     handleViewOrder({ orderNo: data });
@@ -269,17 +254,12 @@ const DataStatistics = () => {
                                 return prev;
                             })
                         }}
-                        onXClick={(e: any) => {
-                            const curData = chartsData[e.dataIndex];
-                            setPieChartsData([{ name: '正常', value: curData[0] }, { name: '异常', value: curData[1] }]);
-                            setPieChartsTitle(e.value);
-                        }}
                     />
                 </div>
                 <div className="right">
                     <PieCharts
+                        currentType={currentType}
                         data={pieChartsData}
-                        title={currentType === 'defect' ? pieChartsTitle : ''}
                     />
                 </div>
             </div>

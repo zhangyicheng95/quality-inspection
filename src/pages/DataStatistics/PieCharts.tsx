@@ -1,15 +1,15 @@
-import React, { useEffect, useContext, useState, useRef, useMemo, useCallback } from 'react';
-import { Tooltip, Form, Modal, Input, message, notification, Switch } from 'antd';
+import React, { useEffect, } from 'react';
 import * as echarts from 'echarts';
-import moment from 'moment';
+import * as _ from 'lodash';
 
 interface Props {
+    currentType?: any;
     data: any,
     title?: any,
 }
 
 const BarCharts: React.FC<Props> = (props: any) => {
-    const { data = [], title, } = props;
+    const { data = [], title, currentType } = props;
     useEffect(() => {
         const dom = document.getElementById('pie-chart');
         const myChart = echarts.init(dom);
@@ -22,7 +22,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
                     // fontFamily:'serif',
                 },
             },
-            color: ['rgb(115,171,216)', 'rgb(245,142,94)'],
+            // color: ['rgb(115,171,216)', 'rgb(245,142,94)'],
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
@@ -56,8 +56,16 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 },
             ]
         };
-        myChart.setOption(option);
-    }, [data, title]);
+
+        myChart.setOption(Object.assign({}, option, currentType !== 'defect' ? {
+            color: ['rgb(115,171,216)', 'rgb(245,142,94)'],
+        } : {}));
+
+        return () => {
+            myChart && myChart.dispose();
+        }
+
+    }, [data, title, currentType]);
 
     return (
         <div

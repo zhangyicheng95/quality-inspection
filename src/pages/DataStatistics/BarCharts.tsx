@@ -2,8 +2,10 @@ import React, { useEffect, useContext, useState, useRef, useMemo, useCallback } 
 import { Tooltip, Form, Modal, Input, message, notification, Switch } from 'antd';
 import * as echarts from 'echarts';
 import moment from 'moment';
+import * as _ from 'lodash';
 
 interface Props {
+    currentType?: any;
     data: any,
     Xdata: any,
     onXClick?: any,
@@ -12,12 +14,12 @@ interface Props {
 
 let timer = null;
 const BarCharts: React.FC<Props> = (props: any) => {
-    const { data = [], Xdata = [], onClick, onXClick } = props;
+    const { currentType, data = [], Xdata = [], onClick, onXClick } = props;
+
     useEffect(() => {
         const dom = document.getElementById('bar-chart');
         const myChart = echarts.init(dom);
         const option = {
-            color: ['rgb(115,171,216)', 'rgb(245,142,94)'],
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
@@ -40,7 +42,7 @@ const BarCharts: React.FC<Props> = (props: any) => {
             yAxis: {
                 type: 'value',
                 fontSize: 14,
-                splitNumber: data.length === 1 ? 1 : 3,
+                splitNumber: 3,
                 axisLabel: {
                     color: '#ddd'
                     // fontFamily:'serif',
@@ -65,50 +67,69 @@ const BarCharts: React.FC<Props> = (props: any) => {
                 triggerEvent: true,
                 data: Xdata,
             },
+        };
+
+        myChart.setOption(Object.assign({}, option, currentType !== 'defect' ? {
+            color: ['rgb(115,171,216)', 'rgb(245,142,94)'],
+            series: [{
+                name: '正常',
+                id: 'normal',
+                type: 'bar',
+                stack: 'total',
+                label: {
+                    show: true,
+                    formatter: (params) => {
+                        const { data } = params;
+                        const { value, total } = data;
+                        return `${value}\n(${(value / total * 100).toFixed(2).toString().replace(/^(.*\..{2}).*$/, "$1")}%)`
+                    }
+                },
+                emphasis: {
+                    focus: 'series'
+                },
+                data: data.map((item: any) => {
+                    return { value: item[0], total: (item[0] || 0) + (item[1] || 0) }
+                })
+            },
+            {
+                name: '异常',
+                id: 'abNormal',
+                type: 'bar',
+                stack: 'total',
+                label: {
+                    show: true,
+                    formatter: (params) => {
+                        const { data } = params;
+                        const { value, total } = data;
+                        return `${value}\n(${(value / total * 100).toFixed(2).toString().replace(/^(.*\..{2}).*$/, "$1")}%)`
+                    }
+                },
+                emphasis: {
+                    focus: 'series'
+                },
+                data: data.map((item: any) => {
+                    return { value: item[1], total: (item[0] || 0) + (item[1] || 0) }
+                })
+            }],
+        } : {
             series: [
                 {
-                    name: '正常',
-                    id: 'normal',
-                    type: 'bar',
-                    stack: 'total',
-                    label: {
-                        show: true,
-                        formatter: (params) => {
-                            const { data } = params;
-                            const { value, total } = data;
-                            return `${value}\n(${(value / total * 100).toFixed(2).toString().replace(/^(.*\..{2}).*$/, "$1")}%)`
-                        }
-                    },
-                    emphasis: {
-                        focus: 'series'
-                    },
-                    data: data.map((item: any) => {
-                        return { value: item[0], total: (item[0] || 0) + (item[1] || 0) }
-                    })
-                },
-                {
-                    name: '异常',
+                    name: '缺陷',
                     id: 'abNormal',
                     type: 'bar',
-                    stack: 'total',
                     label: {
                         show: true,
-                        formatter: (params) => {
-                            const { data } = params;
-                            const { value, total } = data;
-                            return `${value}\n(${(value / total * 100).toFixed(2).toString().replace(/^(.*\..{2}).*$/, "$1")}%)`
-                        }
                     },
                     emphasis: {
                         focus: 'series'
                     },
-                    data: data.map((item: any) => {
-                        return { value: item[1], total: (item[0] || 0) + (item[1] || 0) }
-                    })
-                },
+                    backgroundStyle: {
+                        color: 'rgb(245,142,94)',
+                    },
+                    data: data
+                }
             ]
-        };
-        myChart.setOption(option);
+        }));
 
         myChart.on('click', (e) => {
             if (e.componentType == 'xAxis') {
@@ -122,8 +143,13 @@ const BarCharts: React.FC<Props> = (props: any) => {
                     onClick && onClick(e);
                 }, 200);
             }
-        })
-    }, [data, Xdata]);
+        });
+
+        return () => {
+            myChart && myChart.dispose();
+        }
+
+    }, [data, Xdata, currentType]);
 
     return (
         <div
