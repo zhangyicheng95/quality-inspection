@@ -71,7 +71,7 @@ const History = () => {
         { key: 'index', dataIndex: 'index', title: '序号', width: 50, align: 'center' },
         { key: 'orderNo', dataIndex: 'orderNo', title: '订单号' },
         {
-            key: 'orderStatus', dataIndex: 'orderStatus', title: '订单状态', render: (result, record) => {
+            key: 'orderStatus', dataIndex: 'orderStatus', title: '订单状态', width: 80, render: (result, record) => {
                 const { algorithmData } = record;
                 return (
                     <span className={CLASS_RESULT[result]}>
@@ -83,21 +83,22 @@ const History = () => {
             }
         },
         {
-            key: 'orderTime', dataIndex: 'orderTime', title: '订单时间', render: (text) => {
-                return moment(text).format('YYYY-MM-DD HH:mm:ss')
+            key: 'orderTime', dataIndex: 'orderTime', title: '订单时间', width: 170, render: (text) => {
+                return moment(text).format('YYYY-MM-DD HH:mm:ss');
             }
         },
         {
-            key: 'orderRunTime', dataIndex: 'orderRunTime', title: '运行时长', render: (text, record) => {
+            key: 'orderRunTime', dataIndex: 'orderRunTime', title: '运行时长', width: 80, render: (text, record) => {
                 const { orderTime = 0, orderUpdateTime = 0 } = record;
-                return formatTimeToDate(Number(orderUpdateTime) - Number(orderTime))
+                return formatTimeToDate(Number(orderUpdateTime) - Number(orderTime));
             }
         },
-        { key: 'alarmImgCount', dataIndex: 'alarmImgCount', title: '报警图片数量', className: "col-alarm" },
-        { key: 'falsyAlarmImgCount', dataIndex: 'falsyAlarmImgCount', title: '误报图片数量', className: "col-falsy" },
-        { key: 'confirmedAlarmImgCount', dataIndex: 'confirmedAlarmImgCount', title: '异常图片数量', className: "col-confirmed" },
+        { key: 'materialName', dataIndex: 'materialName', title: '型号' },
+        { key: 'alarmImgCount', dataIndex: 'alarmImgCount', title: '报警图片数量', width: 108, className: "col-alarm" },
+        { key: 'falsyAlarmImgCount', dataIndex: 'falsyAlarmImgCount', title: '误报图片数量', width: 108, className: "col-falsy" },
+        { key: 'confirmedAlarmImgCount', dataIndex: 'confirmedAlarmImgCount', title: '异常图片数量', width: 108, className: "col-confirmed" },
         {
-            key: 'auditedImgCount', dataIndex: 'auditedImgCount', title: '审核进度',
+            key: 'auditedImgCount', dataIndex: 'auditedImgCount', title: '审核进度', width: 80,
             render: (auditedImgCount, { alarmImgCount }) => (
                 <span className={alarmImgCount && (alarmImgCount === auditedImgCount) ? 'success' : ''}>
                     {auditedImgCount}/{alarmImgCount}

@@ -11,9 +11,8 @@ const Index: React.FC<IProps> = ({
     children,
 }) => {
     useEffect(() => {
-        console.log('location:', location)
-        !localStorage.getItem("ipUrl-real") && localStorage.setItem("ipUrl-real", 'localhost:58080');
-        !localStorage.getItem("ipUrl-history") && localStorage.setItem("ipUrl-history", 'localhost:19820');
+        !localStorage.getItem("ipUrl-real") && localStorage.setItem("ipUrl-real", 'csdasc.sany.com.cn');
+        !localStorage.getItem("ipUrl-history") && localStorage.setItem("ipUrl-history", 'csdasc.sany.com.cn');
     }, []);
 
     return (

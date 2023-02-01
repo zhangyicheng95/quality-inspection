@@ -13,7 +13,9 @@ export default () => {
     const [pageNum, setPage] = useState<number>(1);
     const [ws, setWs] = useState<any>();
     const [inited, setInited] = useState<boolean>(false);
+
     const init = async () => {
+        if (location.hash?.indexOf('realtime') < 0) return;
         setProcessResult({})
         console.log('version 0.0.4 2022-01-07 v2')
         if (window['ws']) return;

@@ -5,5 +5,5 @@ const BASE_IP = (href.indexOf('iframe') > -1 || pathname !== '/') ?
     ((localStorage.getItem("ipUrl-real") || 'localhost:8888') + pathname);
 
 export const website = {
-    socket: `ws://${BASE_IP}/webSocket`,
+    socket: `ws://${BASE_IP}webSocket`,
 };

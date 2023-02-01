@@ -111,5 +111,8 @@ export function formatTimeToDate(date = 0) {
     if (Number(s) > 0) {
         result += `${s}秒`;
     }
+    if(!result){
+        result = '< 1秒'
+    }
     return result;
 }
