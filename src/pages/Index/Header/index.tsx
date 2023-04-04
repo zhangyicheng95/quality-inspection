@@ -122,7 +122,7 @@ const Header: React.FC = () => {
                                 initialValue={localStorage.getItem("serverTitle") || undefined}
                                 rules={[{ required: true, message: "项目名称" }]}
                             >
-                                <Input placeholder="专汽车架纵梁压铆成型检测" />
+                                <Input placeholder="质检检测" />
                             </Form.Item>
                             {
                                 pathname === '/realtime' ?

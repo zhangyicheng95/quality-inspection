@@ -41,5 +41,6 @@ export default defineConfig({
     define: {
         'process.env.mock': !!MOCK,
         'process.env.dev': REACT_APP_ENV === 'dev',
-    }
+    },
+    outputPath: "track"
 });

@@ -9,6 +9,7 @@ import BarCharts from './BarCharts';
 import * as _ from 'lodash';
 import moment from 'moment';
 import PieCharts from './PieCharts';
+import LineCharts from './LineCharts';
 
 const RangePicker: any = DatePicker.RangePicker;
 
@@ -130,6 +131,14 @@ const DataStatistics = () => {
         return window.location.hash.indexOf('iframe') > -1;
     }, [window.location.hash]);
 
+    const onTabsChange = (tab: string) => {
+        setChartsData([]);
+        setChartsFooter([]);
+        setPieChartsData([]);
+        setCurrentType(tab);
+        onCancel();
+    };
+
     return (
         <div className="page-history">
             {
@@ -151,37 +160,19 @@ const DataStatistics = () => {
                                 <Col span={7} className="statistic-btn-box">
                                     <div
                                         className={classNames("statistic-btn", { active: currentType === 'order' })}
-                                        onClick={() => {
-                                            setChartsData([]);
-                                            setChartsFooter([]);
-                                            setPieChartsData([]);
-                                            setCurrentType('order');
-                                            onCancel();
-                                        }}
+                                        onClick={() => onTabsChange('order')}
                                     >
                                         订单维度
                                     </div>
                                     <div
                                         className={classNames("statistic-btn", { active: currentType === 'img' })}
-                                        onClick={() => {
-                                            setChartsData([]);
-                                            setChartsFooter([]);
-                                            setPieChartsData([]);
-                                            setCurrentType('img');
-                                            onCancel();
-                                        }}
+                                        onClick={() => onTabsChange('img')}
                                     >
                                         图片维度
                                     </div>
                                     <div
                                         className={classNames("statistic-btn", { active: currentType === 'defect' })}
-                                        onClick={() => {
-                                            setChartsData([]);
-                                            setChartsFooter([]);
-                                            setPieChartsData([]);
-                                            setCurrentType('defect');
-                                            onCancel();
-                                        }}
+                                        onClick={() => onTabsChange('defect')}
                                     >
                                         缺陷维度
                                     </div>
@@ -224,37 +215,74 @@ const DataStatistics = () => {
             }
             <div className="page-history-order-list flex-box" style={isIframe ? { height: '100%', margin: 0 } : {}}>
                 <div className="left">
-                    <BarCharts
-                        currentType={currentType}
-                        data={chartsData}
-                        Xdata={chartsFooter}
-                        onClick={(e: any) => {
-                            if (isIframe) {
-                                const href = window.location.href.split('?')[0];
-                                window.open(href, '_blank');
-                                return;
-                            }
-                            setCurrentType((prev: string) => {
-                                const { name, seriesId, dataIndex } = e;
-                                console.log(e)
-                                setImgQuery((pre: any) => {
-                                    return Object.assign({}, pre, {
-                                        algStatus: seriesId === 'normal' ? 1 : seriesId === 'abNormal' ? -1 : 0
-                                    }, prev === 'defect' ? {} : {
-                                        timeRange: [moment(new Date(name).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(name).getTime() + 16 * 60 * 60 * 1000 - 1000)],
-                                    });
-                                });
-                                if (prev === 'order') {
-                                    const data = chartsData[dataIndex][seriesId];
-                                    handleViewOrder({ orderNo: data });
-                                } else {
-                                    handleViewOrder({ orderNo: '' });
-                                }
+                    {
+                        // @ts-ignore
+                        (window?.QUALITY_CONFIG?.type === 'tbg' && currentType === 'order')
+                            ?
+                            <LineCharts
+                                currentType={currentType}
+                                data={chartsData}
+                                Xdata={chartsFooter}
+                                onClick={(e: any) => {
+                                    if (isIframe) {
+                                        const href = window.location.href.split('?')[0];
+                                        window.open(href, '_blank');
+                                        return;
+                                    }
+                                    setCurrentType((prev: string) => {
+                                        const { name, seriesId, dataIndex } = e;
+                                        console.log(e)
+                                        setImgQuery((pre: any) => {
+                                            return Object.assign({}, pre, {
+                                                algStatus: seriesId === 'normal' ? 1 : seriesId === 'abNormal' ? -1 : 0
+                                            }, prev === 'defect' ? {} : {
+                                                timeRange: [moment(new Date(name).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(name).getTime() + 16 * 60 * 60 * 1000 - 1000)],
+                                            });
+                                        });
+                                        if (prev === 'order') {
+                                            const data = chartsData[dataIndex][seriesId];
+                                            handleViewOrder({ orderNo: data });
+                                        } else {
+                                            handleViewOrder({ orderNo: '' });
+                                        }
 
-                                return prev;
-                            })
-                        }}
-                    />
+                                        return prev;
+                                    })
+                                }}
+                            />
+                            :
+                            <BarCharts
+                                currentType={currentType}
+                                data={chartsData}
+                                Xdata={chartsFooter}
+                                onClick={(e: any) => {
+                                    if (isIframe) {
+                                        const href = window.location.href.split('?')[0];
+                                        window.open(href, '_blank');
+                                        return;
+                                    }
+                                    setCurrentType((prev: string) => {
+                                        const { name, seriesId, dataIndex } = e;
+                                        console.log(e)
+                                        setImgQuery((pre: any) => {
+                                            return Object.assign({}, pre, {
+                                                algStatus: seriesId === 'normal' ? 1 : seriesId === 'abNormal' ? -1 : 0
+                                            }, prev === 'defect' ? {} : {
+                                                timeRange: [moment(new Date(name).getTime() - 8 * 60 * 60 * 1000 + 1000), moment(new Date(name).getTime() + 16 * 60 * 60 * 1000 - 1000)],
+                                            });
+                                        });
+                                        if (prev === 'order') {
+                                            const data = chartsData[dataIndex][seriesId];
+                                            handleViewOrder({ orderNo: data });
+                                        } else {
+                                            handleViewOrder({ orderNo: '' });
+                                        }
+
+                                        return prev;
+                                    })
+                                }}
+                            />
+                    }
                 </div>
                 <div className="right">
                     <PieCharts
