@@ -101,11 +101,12 @@ const DataStatistics = () => {
             if (currentType === 'defect') {
                 setChartsData([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
                 setChartsFooter(() => {
-                    let obj = [];
-                    for (let i = 1; i < Object.keys(defectList).length + 1; i++) {
-                        obj = obj.concat(defectList[i + '']);
-                    }
-                    return obj;
+                    // let obj = [];
+                    // for (let i = 1; i < Object.keys(defectList).length + 1; i++) {
+                    //     obj = obj.concat(defectList[i + '']);
+                    // }
+                    // return obj;
+                    return Object.values(defectList);
                 });
                 setPieChartsData([{ name: '', value: 0 }]);
             } else {

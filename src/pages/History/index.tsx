@@ -88,7 +88,7 @@ const History = () => {
             }
         },
         {
-            key: 'orderRunTime', dataIndex: 'orderRunTime', title: '运行时长', width: 80, render: (text, record) => {
+            key: 'orderRunTime', dataIndex: 'orderRunTime', title: '运行时长', width: 130, render: (text, record) => {
                 const { orderTime = 0, orderUpdateTime = 0 } = record;
                 return formatTimeToDate(Number(orderUpdateTime) - Number(orderTime));
             }
@@ -192,7 +192,7 @@ const History = () => {
                 className="page-history-order-list"
                 columns={columns as any}
                 rowKey="orderNo"
-                dataSource={(!!orderList?.list ? orderList?.list : []).map((i, index) => ({
+                dataSource={(!!orderList?.list?.length ? orderList?.list : []).map((i, index) => ({
                     ...i,
                     index: index + 1
                 }))}
