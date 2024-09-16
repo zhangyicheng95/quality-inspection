@@ -1,0 +1,139 @@
+.control {
+  width: 100%;
+  height: 100%;
+
+  :global {
+
+    .control-box {
+      width: 1200px;
+      height: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      overflow-y: auto;
+
+      &-search-box {
+        margin-bottom: 24px;
+      }
+
+      &-item-box {
+        margin-bottom: 24px;
+
+        .home-item-three-header {
+          padding-left: 4px;
+          border-left: 4px solid #2384DD;
+          margin-bottom: 8px;
+
+          &-left {
+            font-size: 14px;
+          }
+
+          &-right {
+            font-size: 12px;
+            color: rgba(208, 208, 208, 0.7);
+          }
+        }
+
+        .home-item-three-body {
+          width: 100%;
+          gap: 8px;
+
+          &-left {
+            width: 25%;
+            height: 166px;
+            background-color: #2d4f6f;
+
+            img {
+              height: 100%;
+            }
+          }
+
+          &-right {
+            width: 75%;
+            height: 166px;
+            gap: 8px;
+
+            &-item {
+              height: 26px;
+              padding: 2px 8px;
+              background: linear-gradient(to right, #2d4f6f 0%, #2384DD 50%, #2d4f6f 100%);
+            }
+
+            &-progress {
+              width: 100%;
+              height: 30px;
+              gap: 24px;
+
+              &-item {
+                flex: 1;
+                height: 100%;
+
+                .ant-progress {
+                  height: 100%;
+                  width: 100%;
+
+                  .ant-progress-steps-outer {
+                    height: 100%;
+                    width: 100%;
+
+                    .ant-progress-steps-item {
+                      flex: 1;
+                      height: 100% !important;
+                    }
+
+                    .ant-progress-text {
+                      font-size: 12px;
+                      line-height: 1.4;
+                      margin-left: 4px;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+:global {
+  .control-modal {
+    height: 96vh;
+    background: #003d6b;
+
+    .ant-modal-content {
+      height: 100%;
+      background: linear-gradient(to right, rgb(52, 114, 168) 0%, rgb(3, 45, 76) 100%);
+
+      .ant-modal-close {
+        color: #fff;
+      }
+
+      .ant-modal-header {
+        background: transparent;
+
+        .ant-modal-title {
+          color: #fff;
+        }
+      }
+
+      .ant-modal-body {
+        height: calc(100% - 55px);
+        overflow-y: auto;
+
+        .control-modal-box {
+          flex-wrap: wrap;
+          gap: 2% 2%;
+
+          &-item {
+            width: 48%;
+            min-height: 300px;
+            height: 40vh;
+            background-color: rgb(0, 0, 0);
+            margin-bottom: 24px;
+          }
+        }
+      }
+    }
+  }
+}

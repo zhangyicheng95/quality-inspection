@@ -1,0 +1,219 @@
+.threeCharts {
+  position: relative;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+
+  :global {
+    #instructions {
+      // color: white;
+      position: absolute;
+      top: 10px;
+      z-index: 8;
+      width: 100%;
+      font-family: monospace;
+      align-items: flex-start;
+
+      .ant-btn {
+        height: auto;
+        font-size: inherit;
+      }
+
+      // .btn {}
+      div {
+        gap: 8px;
+        // justify-content: center;
+      }
+
+      div:first-child,
+      div:last-child {
+        width: 100px;
+      }
+    }
+
+    .camera-position {
+      z-index: 10;
+      flex-wrap: wrap;
+      // width: 64px;
+      gap: 8px;
+      width: 180px !important;
+      padding-left: 12px;
+      font-size: 12px;
+
+      .ant-btn {
+        padding: 4px 6px;
+      }
+
+      &-load-icon {
+        width: 26px;
+        padding: 2px 5px !important;
+      }
+
+      .ant-upload {
+        font-size: inherit;
+      }
+    }
+
+    .render-dom {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+
+      .measurementLabel {
+        color: white;
+        font-size: 12px;
+        font-family: monospace;
+        background-color: black;
+      }
+
+      #demoBox {
+        width: 100%;
+        height: 100%;
+      }
+
+      .three-mask {
+        position: absolute;
+        top: 40px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 99;
+        gap: 8px;
+        // color: #fff;
+        justify-content: center;
+        background-color: rgba(196, 196, 196, 0.4);
+
+        .process-text {
+          z-index: 99;
+        }
+      }
+
+      .label {
+        position: relative;
+        color: #000;
+        font-size: inherit;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        transform: scale(4);
+
+        .item {
+          padding: 0 4px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          border-bottom: 1px solid #ccc;
+
+          .key {
+            padding: 2px 4px 2px 0;
+            border-right: 1px solid #ccc;
+          }
+
+          .value {
+            flex: 1;
+            padding: 2px 0 2px 4px;
+            text-align: right;
+          }
+        }
+      }
+    }
+
+    .sprite-box {
+      position: absolute;
+      top: 50%;
+      right: 24px;
+      gap: 4px;
+      transform: translateY(-50%);
+
+      .number-box {
+        flex-direction: column;
+        height: 300px;
+        max-height: 80%;
+        font-size: 12px;
+      }
+
+      .sprite-icon {
+        width: 80px;
+        height: 300px;
+        max-height: 80%;
+        background: linear-gradient(to bottom, red, yellow, rgb(0, 255, 0), rgb(0, 225, 255), blue);
+        pointer-events: all;
+      }
+    }
+
+    .camera-box {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      color: #fff;
+      font-size: 14px;
+
+      .cameraIcon {
+        width: 20px !important;
+        height: 20px !important;
+        cursor: pointer;
+        pointer-events: auto;
+      }
+
+      .cameraIcon-switch {
+        transform: scale(0.7);
+      }
+
+      .camera-box-pointer {
+        display: none;
+        padding: 12px;
+        background-color: rgba(0, 0, 0, 0.6);
+
+        .camera-box-pointer-head,
+        .camera-box-pointer-top,
+        .camera-box-pointer-center,
+        .camera-box-pointer-bottom {
+          gap: 16px;
+          margin-bottom: 16px;
+        }
+
+        .camera-box-pointer-head {
+          gap: 0;
+
+          .ant-input-number-group-wrapper {
+            width: 80px;
+
+            .ant-input-number,
+            .ant-input-number-group-addon {
+              color: #fff;
+              background-color: transparent;
+              border-color: rgba(200, 200, 200, 0.6);
+            }
+
+            .ant-input-number-handler-wrap {
+              display: none;
+            }
+          }
+        }
+
+        .camera-box-pointer-top,
+        .camera-box-pointer-bottom {
+          padding-left: 36px;
+        }
+
+        .camera-box-pointer-bottom {
+          margin-bottom: 0;
+        }
+      }
+
+      .camera-box-cursor {
+        gap: 4px;
+        width: 68px;
+        padding: 4px 8px;
+        background-color: rgba(0, 0, 0, 0.6);
+        cursor: pointer;
+      }
+
+      &:hover {
+        .camera-box-pointer {
+          display: block;
+        }
+      }
+    }
+  }
+}
